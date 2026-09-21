@@ -10,6 +10,7 @@ import { roomReservation } from "./definitions/roomReservation";
 import { groupOrder } from "./definitions/groupOrder";
 import { tripPlanner } from "./definitions/tripPlanner";
 import { meetingScheduler } from "./definitions/meetingScheduler";
+import { triviaQuiz } from "./definitions/triviaQuiz";
 
 export const TOOL_DNA_REGISTRY: Record<string, ToolDnaDefinition> = {
   [expenseSplitter.slug]: expenseSplitter,
@@ -23,6 +24,7 @@ export const TOOL_DNA_REGISTRY: Record<string, ToolDnaDefinition> = {
   [groupOrder.slug]: groupOrder,
   [tripPlanner.slug]: tripPlanner,
   [meetingScheduler.slug]: meetingScheduler,
+  [triviaQuiz.slug]: triviaQuiz,
 };
 
 export function getToolDna(slug: string): ToolDnaDefinition | undefined {

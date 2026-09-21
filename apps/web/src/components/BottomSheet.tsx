@@ -4,7 +4,11 @@ import { Icon } from "./Icon";
 
 export function BottomSheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-on-surface/40" onClick={onClose}>
+    // z-[60], strictly above BottomNav's z-50 — same z-index would tie-break
+    // on DOM order (BottomNav renders after page content in layout.tsx), so
+    // the nav bar could otherwise paint over and intercept clicks on a
+    // sheet's bottom-most content, e.g. its Cancel/Submit row.
+    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-on-surface/40" onClick={onClose}>
       <div
         onClick={(e) => e.stopPropagation()}
         className="animate-in w-full max-w-md rounded-lg bg-surface-container-lowest p-space-lg pb-space-xl shadow-xl"

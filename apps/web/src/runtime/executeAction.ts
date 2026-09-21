@@ -195,6 +195,36 @@ async function runExecutor(appInstanceId: string, actorId: string, schemaKey: st
       const merged = { ...JSON.parse(meeting.data), status: "scheduled" };
       return db.appData.update({ where: { id: payload.meetingId }, data: { data: JSON.stringify(merged) } });
     }
+    case "quiz.answer": {
+      let raw = mutation.payload as { questionId: string; optionText: string };
+      const question = await db.appData.findFirstOrThrow({ where: { id: raw.questionId, appInstanceId, entityType: "quiz.question" } });
+      const questionData = JSON.parse(question.data) as { quizId: string; options: string[]; correctOption: string; points?: number };
+
+      const quiz = await db.appData.findFirstOrThrow({ where: { id: questionData.quizId, appInstanceId, entityType: "quiz.quiz" } });
+      if (JSON.parse(quiz.data).status === "closed") throw new ActionError("This quiz is closed", 400);
+
+      const already = await db.appData.findMany({ where: { appInstanceId, entityType: "quiz.answer" } });
+      const duplicate = already.find((a) => {
+        const d = JSON.parse(a.data) as { questionId: string; playerId: string };
+        return d.questionId === raw.questionId && d.playerId === actorId;
+      });
+      if (duplicate) throw new ActionError("You already answered this question", 409);
+
+      const payload = ActionPayloadSchemas["quiz.answer"].parse(raw);
+      const correctIndex = Number(questionData.correctOption) - 1;
+      const correct = payload.optionText === questionData.options[correctIndex];
+      const points = correct ? (questionData.points ?? 10) : 0;
+      return db.appData.create({
+        data: { appInstanceId, entityType: "quiz.answer", data: JSON.stringify({ ...payload, playerId: actorId, correct, points }), createdById: actorId },
+      });
+    }
+    case "quiz.close": {
+      const raw = mutation.payload as { quizId: string };
+      const payload = ActionPayloadSchemas["quiz.close"].parse(raw);
+      const quiz = await db.appData.findFirstOrThrow({ where: { id: payload.quizId, appInstanceId } });
+      const merged = { ...JSON.parse(quiz.data), status: "closed" };
+      return db.appData.update({ where: { id: payload.quizId }, data: { data: JSON.stringify(merged) } });
+    }
     case "savings.contribute": {
       const raw = mutation.payload as { participantId: string; amount: number };
       const participantId = await resolvePersonRef(appInstanceId, "savings.participant", raw.participantId);

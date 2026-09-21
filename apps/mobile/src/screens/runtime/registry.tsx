@@ -10,6 +10,7 @@ import { VotingView } from "./VotingView";
 import { ProgressView } from "./ProgressView";
 import { CalendarView } from "./CalendarView";
 import { MeetingSchedulerView } from "./MeetingSchedulerView";
+import { TriviaQuizView } from "./TriviaQuizView";
 
 /** Mirrors apps/web/src/components/runtime/registry.ts — same fixed set of
  * component keys a MiniAppSpecification can reference, rendered here as real
@@ -33,4 +34,5 @@ export const COMPONENT_REGISTRY: Record<ComponentKey, ComponentType<ScreenCompon
   dashboard: DashboardView,
   member_list: MemberListView,
   meeting_scheduler: MeetingSchedulerView,
+  trivia_quiz: TriviaQuizView,
 };

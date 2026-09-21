@@ -39,6 +39,18 @@ export function computeForSpec(spec: MiniAppSpecification, records: AppDataRecor
         out[c.key] = tallyVotes(availability);
         break;
       }
+      case "quiz.leaderboard": {
+        const answers = byType(records, "quiz.answer").map((r) => r.data as { playerId: string; correct: boolean; points: number });
+        const board: Record<string, { points: number; correct: number }> = {};
+        for (const a of answers) {
+          const entry = board[a.playerId] ?? { points: 0, correct: 0 };
+          entry.points += a.points ?? 0;
+          if (a.correct) entry.correct += 1;
+          board[a.playerId] = entry;
+        }
+        out[c.key] = board;
+        break;
+      }
       case "habit.streaks": {
         const checkins = byType(records, "habit.checkin");
         const byParticipant = new Map<string, string[]>();

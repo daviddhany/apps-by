@@ -16,6 +16,7 @@ const RANDOM_ICON_BY_SLUG: Record<string, string> = {
   "group-order": "receipt",
   "trip-planner": "car",
   "meeting-scheduler": "check-square",
+  "trivia-quiz": "trophy",
 };
 
 /** Shared by handleNeed's mini_app path and handleSurpriseMe — persists a

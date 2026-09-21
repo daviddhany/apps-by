@@ -41,10 +41,20 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
 
   async function submit(value: string) {
     if (!value.trim() || loading) return;
+    return run(value, () => apiFetch<Outcome>("/api/needs", { method: "POST", body: JSON.stringify({ text: value }) }));
+  }
+
+  function surpriseMe() {
+    if (loading) return;
+    return run("🎲 Surprise me — build something random", () => apiFetch<Outcome>("/api/needs/surprise", { method: "POST" }));
+  }
+
+  async function run(promptLabel: string, call: () => Promise<Outcome>) {
     setLoading(true);
     setError(null);
     setOutcome(null);
     setPreview(null);
+    setText(promptLabel);
     setStage(0);
     setSeconds(0.4);
 
@@ -53,7 +63,7 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
     timerRef.current = clock;
 
     try {
-      const result = await apiFetch<Outcome>("/api/needs", { method: "POST", body: JSON.stringify({ text: value }) });
+      const result = await call();
       clearInterval(stageTimer);
 
       if (result.kind === "mini_app") {
@@ -193,7 +203,17 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
 
       {!outcome && !error ? (
         <div className="mt-space-md flex flex-col space-y-space-xs">
-          <span className="pl-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Popular right now</span>
+          <div className="flex items-center justify-between pl-1">
+            <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Popular right now</span>
+            <button
+              type="button"
+              onClick={surpriseMe}
+              className="tap flex items-center gap-1 rounded-full bg-secondary-container px-3 py-1 font-label-sm text-label-sm font-semibold text-on-secondary-container transition-all hover:opacity-90 active:scale-95"
+            >
+              <span aria-hidden>🎲</span>
+              <span>Surprise me</span>
+            </button>
+          </div>
           <div className="no-scrollbar -mx-margin flex items-center gap-2 overflow-x-auto px-margin pb-1">
             {SUGGESTIONS.map((s) => (
               <button

@@ -33,6 +33,16 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
 
   async function submit(value: string) {
     if (!value.trim() || loading) return;
+    return run(() => apiFetch<Outcome>("/api/needs", { method: "POST", body: JSON.stringify({ text: value }) }));
+  }
+
+  function surpriseMe() {
+    if (loading) return;
+    setText("🎲 Surprise me — build something random");
+    return run(() => apiFetch<Outcome>("/api/needs/surprise", { method: "POST" }));
+  }
+
+  async function run(call: () => Promise<Outcome>) {
     setLoading(true);
     setError(null);
     setOutcome(null);
@@ -40,7 +50,7 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
     stageTimer.current = setInterval(() => setStage((s) => Math.min(s + 1, STAGES.length - 1)), 480);
 
     try {
-      const result = await apiFetch<Outcome>("/api/needs", { method: "POST", body: JSON.stringify({ text: value }) });
+      const result = await call();
       if (result.kind === "mini_app") {
         navigation.navigate("AppRuntime", { appInstanceId: result.appInstanceId });
         return;
@@ -109,7 +119,20 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
       ) : null}
 
       {!loading && !outcome && !error ? (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-4 -mx-1" contentContainerStyle={{ paddingHorizontal: 4, gap: 8 }}>
+        <View className="mt-4 flex-row items-center justify-between px-1">
+          <Text className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Popular right now</Text>
+          <Pressable
+            onPress={surpriseMe}
+            className="flex-row items-center gap-1 rounded-full bg-secondary-container px-3 py-1 active:opacity-90"
+          >
+            <Text>🎲</Text>
+            <Text className="text-xs font-semibold text-on-secondary-container">Surprise me</Text>
+          </Pressable>
+        </View>
+      ) : null}
+
+      {!loading && !outcome && !error ? (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-2 -mx-1" contentContainerStyle={{ paddingHorizontal: 4, gap: 8 }}>
           {SUGGESTIONS.map((s) => (
             <Pressable
               key={s.label}

@@ -153,6 +153,14 @@ body {
   color: rgb(var(--color-on-surface));
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+/* Only on body, not html too — setting this on both leaves some browsers
+   unsure which element owns the scrolling box, which can make the page's
+   own vertical (wheel/trackpad) scroll stop responding while the native
+   scrollbar thumb still drags fine, since that's bound to the rendered
+   viewport rather than routed through the ambiguous scroll owner. */
+body {
   overscroll-behavior-y: none;
 }
 

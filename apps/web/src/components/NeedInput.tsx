@@ -157,6 +157,16 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
               <span>Open {preview.spec.title}</span>
               <Icon name="arrow_forward" size={20} />
             </button>
+            <button
+              onClick={() => {
+                setOutcome(null);
+                setPreview(null);
+                setText("");
+              }}
+              className="tap mt-space-sm flex h-10 w-full items-center justify-center font-label-md text-label-md font-semibold text-on-surface-variant"
+            >
+              Make something else
+            </button>
           </div>
         ) : null}
       </div>

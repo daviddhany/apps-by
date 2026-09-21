@@ -13,9 +13,9 @@ export function MainTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#0037b0",
-        tabBarInactiveTintColor: "#434655",
-        tabBarStyle: { borderTopColor: "rgba(0,0,0,0.06)" },
+        tabBarActiveTintColor: "#c0c1ff",
+        tabBarInactiveTintColor: "#c7c4d7",
+        tabBarStyle: { backgroundColor: "#1a1b21", borderTopColor: "rgba(255,255,255,0.08)" },
       }}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: ({ color, size }) => <Icon name="auto_awesome" size={size} color={color} /> }} />

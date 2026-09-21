@@ -70,7 +70,7 @@ export function DiscoverScreen() {
                     {item.usageCount} uses · {item.remixCount} remixes
                   </Text>
                   <Pressable disabled={usingId === item.id} onPress={() => use(item.id)} className="rounded-full bg-primary px-3 py-1.5">
-                    {usingId === item.id ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-sm font-semibold text-on-primary">Use this</Text>}
+                    {usingId === item.id ? <ActivityIndicator size="small" color="#1000a9" /> : <Text className="text-sm font-semibold text-on-primary">Use this</Text>}
                   </Pressable>
                 </View>
               </View>

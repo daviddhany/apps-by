@@ -32,7 +32,7 @@ export function VotingView({ screen, records, allRecords, fields, actions, role,
               <View className="mb-3 flex-row items-start justify-between">
                 <Text className="flex-1 font-medium text-on-surface">{poll.data.question as string}</Text>
                 {closed ? (
-                  <View className="rounded-full bg-black/5 px-2 py-0.5">
+                  <View className="rounded-full bg-surface-container-high px-2 py-0.5">
                     <Text className="text-xs text-on-surface-variant">Closed</Text>
                   </View>
                 ) : null}
@@ -47,7 +47,7 @@ export function VotingView({ screen, records, allRecords, fields, actions, role,
                       key={opt}
                       disabled={!canVote || closed}
                       onPress={() => onMutate({ action: "vote", entity: "voting.vote", payload: { pollId: poll.id, optionId: opt } })}
-                      className={`overflow-hidden rounded-xl border px-3 py-2 ${mine ? "border-primary bg-primary-fixed" : "border-black/10"}`}
+                      className={`overflow-hidden rounded-xl border px-3 py-2 ${mine ? "border-primary bg-primary-fixed" : "border-outline-variant/40"}`}
                     >
                       <View className="flex-row items-center justify-between">
                         <Text className="text-sm text-on-surface">{opt}</Text>
@@ -71,7 +71,7 @@ export function VotingView({ screen, records, allRecords, fields, actions, role,
 
       {canCreate ? (
         <Pressable onPress={() => setAdding(true)} className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg">
-          <Icon name="add" size={26} color="#ffffff" />
+          <Icon name="add" size={26} color="#1000a9" />
         </Pressable>
       ) : null}
 

@@ -79,7 +79,7 @@ export function AppRuntimeScreen() {
   if (!app) {
     return (
       <View className="flex-1 items-center justify-center bg-surface">
-        <ActivityIndicator size="large" color="#0037b0" />
+        <ActivityIndicator size="large" color="#c0c1ff" />
       </View>
     );
   }
@@ -164,12 +164,12 @@ export function AppRuntimeScreen() {
             </View>
             <View className="flex-row items-center gap-1.5">
               <Pressable onPress={() => setShowShare(true)} className="flex-row items-center gap-1.5 rounded-full bg-surface-container px-3 py-2">
-                <Icon name="qr_code_2" size={18} color="#0037b0" />
+                <Icon name="qr_code_2" size={18} color="#c0c1ff" />
                 <Text className="text-sm font-medium text-on-surface">{app.joinCodes[0]?.code ?? "Share"}</Text>
               </Pressable>
               {app.role === "owner" || app.role === "admin" ? (
                 <Pressable onPress={() => setShowMenu(true)} className="h-9 w-9 items-center justify-center rounded-full bg-surface-container">
-                  <Icon name="more_vert" size={18} color="#111c2d" />
+                  <Icon name="more_vert" size={18} color="#e2e2e9" />
                 </Pressable>
               ) : null}
             </View>
@@ -224,7 +224,7 @@ export function AppRuntimeScreen() {
         style={{ bottom: insets.bottom + 88 }}
         className="absolute right-4 flex-row items-center gap-2 rounded-full bg-inverse-surface px-4 py-3 shadow-lg active:opacity-90"
       >
-        <Icon name="auto_awesome" size={20} color="#89f5e7" />
+        <Icon name="auto_awesome" size={20} color="#490080" />
         <Text className="font-bold tracking-tight text-inverse-on-surface">Modify</Text>
       </Pressable>
 
@@ -232,12 +232,12 @@ export function AppRuntimeScreen() {
         <View className="gap-2">
           {app.status === "archived" ? (
             <Pressable onPress={() => setArchived(false)} className="flex-row items-center gap-3 rounded-2xl bg-surface-container-low px-4 py-3">
-              <Icon name="unarchive" size={20} color="#0037b0" />
+              <Icon name="unarchive" size={20} color="#c0c1ff" />
               <Text className="text-base font-medium text-on-surface">Restore app</Text>
             </Pressable>
           ) : (
             <Pressable onPress={() => setArchived(true)} className="flex-row items-center gap-3 rounded-2xl bg-surface-container-low px-4 py-3">
-              <Icon name="archive" size={20} color="#434655" />
+              <Icon name="archive" size={20} color="#c7c4d7" />
               <View>
                 <Text className="text-base font-medium text-on-surface">Archive app</Text>
                 <Text className="text-xs text-on-surface-variant">Hides it without losing any data. Reversible.</Text>
@@ -246,7 +246,7 @@ export function AppRuntimeScreen() {
           )}
           {app.role === "owner" ? (
             <Pressable onPress={confirmDeleteApp} className="flex-row items-center gap-3 rounded-2xl bg-error-container px-4 py-3">
-              <Icon name="delete_forever" size={20} color="#93000A" />
+              <Icon name="delete_forever" size={20} color="#ffdad6" />
               <View>
                 <Text className="text-base font-medium text-on-error-container">Delete permanently</Text>
                 <Text className="text-xs text-on-error-container/80">Deletes all data for every member. Can&rsquo;t be undone.</Text>
@@ -302,7 +302,7 @@ function ShareSheet({
         }}
         className="items-center rounded-full bg-primary py-3"
       >
-        {creating ? <ActivityIndicator color="#fff" /> : <Text className="font-semibold text-on-primary">Create a join code</Text>}
+        {creating ? <ActivityIndicator color="#1000a9" /> : <Text className="font-semibold text-on-primary">Create a join code</Text>}
       </Pressable>
     );
   }
@@ -324,7 +324,7 @@ function ShareSheet({
           }}
           className="mt-3 flex-row items-center gap-1.5 rounded-full bg-surface-container-high px-4 py-1.5"
         >
-          <Icon name={copied ? "check" : "content_copy"} size={16} color="#111c2d" />
+          <Icon name={copied ? "check" : "content_copy"} size={16} color="#e2e2e9" />
           <Text className="text-sm font-medium text-on-surface">{copied ? "Copied!" : "Copy invite link"}</Text>
         </Pressable>
       </View>
@@ -395,7 +395,7 @@ function CommandSheet({ appInstanceId, onDone }: { appInstanceId: string; onDone
         value={text}
         onChangeText={setText}
         placeholder="Describe the change you want…"
-        placeholderTextColor="#94A3B8"
+        placeholderTextColor="#908fa0"
         multiline
         numberOfLines={3}
         className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
@@ -403,7 +403,7 @@ function CommandSheet({ appInstanceId, onDone }: { appInstanceId: string; onDone
       />
       {feedback ? <Text className="text-sm text-tertiary">{feedback}</Text> : null}
       <Pressable onPress={submit} disabled={busy || !text.trim()} className="items-center rounded-full bg-primary py-3 disabled:opacity-50">
-        {busy ? <ActivityIndicator color="#fff" /> : <Text className="font-semibold text-on-primary">Do it</Text>}
+        {busy ? <ActivityIndicator color="#1000a9" /> : <Text className="font-semibold text-on-primary">Do it</Text>}
       </Pressable>
     </View>
   );

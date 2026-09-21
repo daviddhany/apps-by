@@ -17,8 +17,8 @@ export function AppHeader({ title, subtitle, showBack, initial = "N" }: Props) {
   const router = useRouter();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 bg-surface/85 pt-safe shadow-[0_1px_12px_rgba(17,28,45,0.04)] backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-md items-center justify-between gap-space-sm px-space-md">
+    <header className="fixed inset-x-0 top-0 z-40 bg-surface/85 pt-safe shadow-[0_1px_12px_rgba(17,28,45,0.04)] backdrop-blur-xl md:left-[272px]">
+      <div className="mx-auto flex h-16 max-w-md items-center justify-between gap-space-sm px-space-md md:max-w-5xl md:px-margin-desktop">
         <div className="flex min-w-0 items-center gap-space-sm">
           {showBack ? (
             <button

@@ -18,7 +18,7 @@ export function AppHeader({
   const navigation = useNavigation();
 
   return (
-    <View style={{ paddingTop: insets.top }} className="border-b border-black/5 bg-surface/95">
+    <View style={{ paddingTop: insets.top }} className="border-b border-outline-variant/40 bg-surface/95">
       <View className="h-16 flex-row items-center justify-between gap-3 px-4">
         <View className="flex-1 flex-row items-center gap-3">
           {showBack ? (
@@ -26,7 +26,7 @@ export function AppHeader({
               onPress={() => navigation.goBack()}
               className="h-11 w-11 -ml-1.5 items-center justify-center rounded-full active:bg-surface-container-high"
             >
-              <Icon name="arrow_back_ios_new" size={20} color="#111c2d" />
+              <Icon name="arrow_back_ios_new" size={20} color="#e2e2e9" />
             </Pressable>
           ) : (
             <Image source={require("../../assets/logo.png")} className="h-8 w-8" resizeMode="contain" />

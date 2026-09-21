@@ -33,7 +33,7 @@ export function GenericRecordsView({ screen, records, allRecords, fields, action
           onPress={() => setAdding(true)}
           className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg active:opacity-90"
         >
-          <Icon name="add" size={26} color="#ffffff" />
+          <Icon name="add" size={26} color="#1000a9" />
         </Pressable>
       ) : null}
 

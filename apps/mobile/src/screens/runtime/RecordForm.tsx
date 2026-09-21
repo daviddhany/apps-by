@@ -39,11 +39,11 @@ export function RecordForm({ fields, submitLabel, onSubmit, onCancel }: Props) {
         ))}
       {error ? <Text className="text-sm text-error">{error}</Text> : null}
       <View className="mt-1 flex-row gap-2">
-        <Pressable onPress={onCancel} className="flex-1 items-center rounded-full border border-black/10 py-3">
+        <Pressable onPress={onCancel} className="flex-1 items-center rounded-full border border-outline-variant/40 py-3">
           <Text className="font-semibold text-on-surface-variant">Cancel</Text>
         </Pressable>
         <Pressable onPress={handleSubmit} disabled={busy} className="flex-1 items-center rounded-full bg-primary py-3 disabled:opacity-50">
-          {busy ? <ActivityIndicator color="#fff" /> : <Text className="font-semibold text-on-primary">{submitLabel}</Text>}
+          {busy ? <ActivityIndicator color="#1000a9" /> : <Text className="font-semibold text-on-primary">{submitLabel}</Text>}
         </Pressable>
       </View>
     </View>
@@ -85,7 +85,7 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
         <Text className="text-xs text-on-surface-variant">{field.label}</Text>
         <TextInput
           placeholder={field.type === "multiselect" ? "Comma-separated names" : "Name"}
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor="#908fa0"
           value={typeof value === "string" ? value : Array.isArray(value) ? value.join(", ") : ""}
           onChangeText={(text) => onChange(field.type === "multiselect" ? text.split(",").map((s) => s.trim()).filter(Boolean) : text)}
           className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"

@@ -30,7 +30,7 @@ export function CalendarView({ screen, records, allRecords, fields, actions, rol
         sortedKeys.map((key) => (
           <View key={key}>
             <Text className="mb-1 px-1 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">{formatDate(key)}</Text>
-            <View className="divide-y divide-black/5 rounded-2xl bg-surface-container-lowest">
+            <View className="divide-y divide-outline-variant/30 rounded-2xl bg-surface-container-lowest">
               {grouped.get(key)!.map((r) => (
                 <View key={r.id} className="px-4 py-3">
                   <Text className="font-medium text-on-surface">
@@ -46,7 +46,7 @@ export function CalendarView({ screen, records, allRecords, fields, actions, rol
 
       {canAdd ? (
         <Pressable onPress={() => setAdding(true)} className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg">
-          <Icon name="add" size={26} color="#ffffff" />
+          <Icon name="add" size={26} color="#1000a9" />
         </Pressable>
       ) : null}
 

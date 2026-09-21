@@ -14,7 +14,7 @@ export function MemberListView({ screen, records, fields, actions, role, members
     <View className="gap-4 pb-24">
       <View>
         <Text className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">App members</Text>
-        <View className="divide-y divide-black/5 rounded-2xl bg-surface-container-lowest">
+        <View className="divide-y divide-outline-variant/30 rounded-2xl bg-surface-container-lowest">
           {members.map((m) => (
             <View key={m.id} className="flex-row items-center gap-3 px-4 py-3">
               <View className="h-9 w-9 items-center justify-center rounded-full bg-primary-fixed">
@@ -23,7 +23,7 @@ export function MemberListView({ screen, records, fields, actions, role, members
               <Text className="flex-1 text-sm font-medium text-on-surface">
                 {m.name} {m.isGuest ? <Text className="text-xs text-on-surface-variant">(guest)</Text> : null}
               </Text>
-              <View className="rounded-full bg-black/5 px-2 py-0.5">
+              <View className="rounded-full bg-surface-container-high px-2 py-0.5">
                 <Text className="text-xs text-on-surface-variant">{m.role}</Text>
               </View>
             </View>
@@ -34,7 +34,7 @@ export function MemberListView({ screen, records, fields, actions, role, members
       {records.length > 0 ? (
         <View>
           <Text className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">{screen.title}</Text>
-          <View className="divide-y divide-black/5 rounded-2xl bg-surface-container-lowest">
+          <View className="divide-y divide-outline-variant/30 rounded-2xl bg-surface-container-lowest">
             {records.map((r) => (
               <View key={r.id} className="px-4 py-3">
                 <Text className="text-sm font-medium text-on-surface">{(r.data.name as string) ?? "—"}</Text>
@@ -46,7 +46,7 @@ export function MemberListView({ screen, records, fields, actions, role, members
 
       {canAdd ? (
         <Pressable onPress={() => setAdding(true)} className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg">
-          <Icon name="add" size={26} color="#ffffff" />
+          <Icon name="add" size={26} color="#1000a9" />
         </Pressable>
       ) : null}
 

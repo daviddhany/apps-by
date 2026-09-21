@@ -34,7 +34,7 @@ const NAME_MAP: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   delete_forever: "delete-forever",
 };
 
-export function Icon({ name, size = 20, color = "#111c2d" }: { name: string; size?: number; color?: string }) {
+export function Icon({ name, size = 20, color = "#e2e2e9" }: { name: string; size?: number; color?: string }) {
   const resolved = NAME_MAP[name] ?? "help-outline";
   return <MaterialIcons name={resolved} size={size} color={color} />;
 }

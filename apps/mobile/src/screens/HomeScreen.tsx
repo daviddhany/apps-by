@@ -87,7 +87,7 @@ export function HomeScreen() {
         >
           <View className="flex-1 flex-row items-center gap-2.5">
             <View className="h-9 w-9 items-center justify-center rounded-xl bg-surface-container-lowest">
-              <Icon name="qr_code_scanner" size={20} color="#0037b0" />
+              <Icon name="qr_code_scanner" size={20} color="#c0c1ff" />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-semibold text-on-surface">Got a code? Join an app</Text>
@@ -146,7 +146,7 @@ export function HomeScreen() {
 
         <View className="flex-row items-center gap-3 rounded-2xl bg-surface-container p-4">
           <View className="h-9 w-9 items-center justify-center rounded-full bg-surface-container-lowest">
-            <Icon name="offline_bolt" size={20} color="#0037b0" />
+            <Icon name="offline_bolt" size={20} color="#c0c1ff" />
           </View>
           <View className="flex-1">
             <Text className="text-sm font-bold text-on-surface">Every app is instantly shareable</Text>

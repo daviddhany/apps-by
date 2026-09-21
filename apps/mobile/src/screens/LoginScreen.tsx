@@ -33,7 +33,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (screen: s
         <View className="gap-3 rounded-2xl bg-surface-container-lowest p-5 shadow-sm">
           <TextInput
             placeholder="Email"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor="#908fa0"
             autoCapitalize="none"
             keyboardType="email-address"
             value={email}
@@ -42,7 +42,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (screen: s
           />
           <TextInput
             placeholder="Password"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor="#908fa0"
             secureTextEntry
             value={password}
             onChangeText={setPassword}
@@ -54,7 +54,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (screen: s
             disabled={loading || !email || !password}
             className="mt-1 items-center rounded-full bg-primary py-3 active:opacity-80 disabled:opacity-50"
           >
-            {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-base font-semibold text-on-primary">Sign in</Text>}
+            {loading ? <ActivityIndicator color="#1000a9" /> : <Text className="text-base font-semibold text-on-primary">Sign in</Text>}
           </Pressable>
         </View>
 

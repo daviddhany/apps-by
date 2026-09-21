@@ -32,21 +32,23 @@ export default async function HomePage() {
   return (
     <>
       <AppHeader title="Needly" subtitle="Home" initial={user.name} />
-      <main className="flex flex-col space-y-space-lg px-margin pb-space-xl pt-20">
-        <div className="flex flex-col space-y-space-xs pt-space-xs">
-          <div className="inline-flex items-center gap-1.5 self-start rounded-full bg-surface-container-high px-3 py-1 font-label-md text-label-md text-on-surface-variant shadow-sm">
+      <main className="flex flex-col space-y-space-lg px-margin pb-space-xl pt-20 md:px-margin-desktop">
+        <div className="flex flex-col space-y-space-xs pt-space-xs md:items-center md:text-center">
+          <div className="inline-flex items-center gap-1.5 self-start rounded-full bg-surface-container-high px-3 py-1 font-label-md text-label-md text-on-surface-variant shadow-sm md:self-center">
             <span>Hi {user.name.split(" ")[0]}</span>
             <span className="animate-bounce">👋</span>
           </div>
-          <h1 className="mt-1 font-display-mobile text-display-mobile tracking-tight text-on-surface">What do you need?</h1>
-          <p className="font-body-md text-body-md text-on-surface-variant">Tell Needly what you&rsquo;re trying to do — we&rsquo;ll build the tool in seconds.</p>
+          <h1 className="mt-1 font-display-mobile text-display-mobile tracking-tight text-on-surface md:font-display md:text-display">What do you need?</h1>
+          <p className="font-body-md text-body-md text-on-surface-variant md:max-w-xl">Tell Needly what you&rsquo;re trying to do — we&rsquo;ll build the tool in seconds.</p>
         </div>
 
-        <NeedInput autoFocus />
+        <div className="md:mx-auto md:w-full md:max-w-2xl">
+          <NeedInput autoFocus />
+        </div>
 
         <Link
           href="/join"
-          className="flex w-full items-center justify-between gap-space-sm rounded-2xl bg-surface-container-high/60 p-space-sm backdrop-blur-md"
+          className="flex w-full items-center justify-between gap-space-sm rounded-2xl bg-surface-container-high/60 p-space-sm backdrop-blur-md md:mx-auto md:max-w-2xl"
         >
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-container-lowest text-primary shadow-sm">
@@ -72,7 +74,7 @@ export default async function HomePage() {
                 <Icon name="chevron_right" size={16} />
               </Link>
             </div>
-            <div className="mt-space-sm flex flex-col space-y-3.5">
+            <div className="mt-space-sm grid grid-cols-1 gap-3.5 md:grid-cols-2 lg:grid-cols-3">
               {cards.map((c) => (
                 <AppCard key={c.id} card={c} />
               ))}
@@ -80,7 +82,7 @@ export default async function HomePage() {
           </section>
         ) : null}
 
-        <div className="flex items-center gap-3 rounded-2xl bg-surface-container p-space-md">
+        <div className="flex items-center gap-3 rounded-2xl bg-surface-container p-space-md md:mx-auto md:max-w-2xl">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-container-lowest text-primary shadow-sm">
             <Icon name="offline_bolt" size={20} />
           </div>

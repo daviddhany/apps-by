@@ -18,7 +18,7 @@ export function BottomNav() {
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
-    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-50 pb-safe">
+    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-50 pb-safe md:hidden">
       <div className="mx-auto w-full max-w-md px-space-md pb-space-sm pt-1">
         <div className="glass-shell pointer-events-auto flex items-center justify-between rounded-full px-space-sm py-1.5">
           {SIDE_ITEMS.map((item) => (

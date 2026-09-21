@@ -63,24 +63,24 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
             value={text}
             onChangeText={setText}
             placeholder="e.g. We're 8 friends traveling to Dahab and want to split all our expenses..."
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor="#908fa0"
             multiline
             numberOfLines={3}
             className="rounded-2xl bg-surface-container-low p-4 text-base text-on-surface"
             style={{ minHeight: 88, textAlignVertical: "top" }}
           />
           <View className="absolute right-3 top-3 opacity-40">
-            <Icon name="auto_awesome" size={20} color="#1d4ed8" />
+            <Icon name="auto_awesome" size={20} color="#8083ff" />
           </View>
         </View>
 
         <View className="flex-row items-center justify-between pt-1">
           <View className="flex-row items-center gap-2">
             <View className="h-9 w-9 items-center justify-center rounded-full bg-surface-container">
-              <Icon name="mic" size={18} color="#1d4ed8" />
+              <Icon name="mic" size={18} color="#8083ff" />
             </View>
             <View className="h-9 w-9 items-center justify-center rounded-full bg-surface-container">
-              <Icon name="attach_file" size={18} color="#434655" />
+              <Icon name="attach_file" size={18} color="#c7c4d7" />
             </View>
           </View>
           <Pressable
@@ -89,12 +89,12 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
             className="flex-row items-center gap-1.5 rounded-full bg-primary-container px-5 py-2.5 shadow-sm active:opacity-90 disabled:opacity-40"
           >
             {loading ? (
-              <ActivityIndicator color="#fff" size="small" />
+              <ActivityIndicator color="#1000a9" size="small" />
             ) : (
               <>
-                <Icon name="bolt" size={18} color="#ffffff" />
+                <Icon name="bolt" size={18} color="#1000a9" />
                 <Text className="font-semibold text-on-primary">Make</Text>
-                <Icon name="arrow_forward" size={18} color="#ffffff" />
+                <Icon name="arrow_forward" size={18} color="#1000a9" />
               </>
             )}
           </Pressable>
@@ -103,7 +103,7 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
 
       {loading ? (
         <View className="mt-3 flex-row items-center justify-center gap-2">
-          <ActivityIndicator size="small" color="#0037b0" />
+          <ActivityIndicator size="small" color="#c0c1ff" />
           <Text className="text-sm text-on-surface-variant">{STAGES[stage]}</Text>
         </View>
       ) : null}

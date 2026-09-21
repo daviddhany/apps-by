@@ -11,7 +11,7 @@ export function LeaderboardView({ screen, allRecords, computed, spec }: ScreenCo
       .map((p) => ({ id: p.id, name: p.data.name as string, ...(standings[p.id] ?? { wins: 0, losses: 0 }) }))
       .sort((a, b) => b.wins - a.wins);
     return (
-      <View className="divide-y divide-black/5 rounded-2xl bg-surface-container-lowest pb-24">
+      <View className="divide-y divide-outline-variant/30 rounded-2xl bg-surface-container-lowest pb-24">
         {rows.map((r, i) => (
           <View key={r.id} className="flex-row items-center gap-3 px-4 py-3">
             <Text className="w-5 text-center text-sm font-semibold text-on-surface-variant">{i + 1}</Text>
@@ -28,7 +28,7 @@ export function LeaderboardView({ screen, allRecords, computed, spec }: ScreenCo
   const rows = players.map((p) => ({ id: p.id, name: p.data.name as string, streak: streaks[p.id] ?? 0 })).sort((a, b) => b.streak - a.streak);
 
   return (
-    <View className="divide-y divide-black/5 rounded-2xl bg-surface-container-lowest pb-24">
+    <View className="divide-y divide-outline-variant/30 rounded-2xl bg-surface-container-lowest pb-24">
       {rows.map((r, i) => (
         <View key={r.id} className="flex-row items-center gap-3 px-4 py-3">
           <Text className="w-5 text-center text-sm font-semibold text-on-surface-variant">{i + 1}</Text>

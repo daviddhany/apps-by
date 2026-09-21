@@ -22,7 +22,7 @@ export function ProfileScreen() {
           <Text className="mt-1 text-sm text-on-surface-variant">Unlimited creation for the MVP — Pro features are architected but not enforced yet.</Text>
         </View>
 
-        <Pressable onPress={logout} className="items-center rounded-xl border border-black/10 py-3">
+        <Pressable onPress={logout} className="items-center rounded-xl border border-outline-variant/40 py-3">
           <Text className="text-base font-medium text-on-surface-variant">Sign out</Text>
         </Pressable>
       </View>

@@ -21,7 +21,7 @@ export function ChecklistView({ screen, records, allRecords, fields, actions, ro
           <Text className="text-sm text-on-surface-variant">Nothing to check off yet.</Text>
         </View>
       ) : (
-        <View className="divide-y divide-black/5 rounded-2xl bg-surface-container-lowest">
+        <View className="divide-y divide-outline-variant/30 rounded-2xl bg-surface-container-lowest">
           {records.map((r) => {
             const isDone = Boolean(r.data.done ?? r.data.present);
             const title = (r.data.title as string) ?? labelFor(allRecords, r.data.participantId as string, "Item");
@@ -47,7 +47,7 @@ export function ChecklistView({ screen, records, allRecords, fields, actions, ro
 
       {canAdd ? (
         <Pressable onPress={() => setAdding(true)} className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg">
-          <Icon name="add" size={26} color="#ffffff" />
+          <Icon name="add" size={26} color="#1000a9" />
         </Pressable>
       ) : null}
 

@@ -21,12 +21,12 @@ export function ProgressView({ screen, records, allRecords, fields, actions, spe
         <Text className="mt-1 text-2xl font-bold text-on-surface">
           ${total.toFixed(2)} <Text className="text-base text-on-surface-variant">/ ${goal.toFixed(2)}</Text>
         </Text>
-        <View className="mt-3 h-3 w-full overflow-hidden rounded-full bg-black/5">
+        <View className="mt-3 h-3 w-full overflow-hidden rounded-full bg-surface-container-high">
           <View className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
         </View>
       </View>
 
-      <View className="divide-y divide-black/5 rounded-2xl bg-surface-container-lowest">
+      <View className="divide-y divide-outline-variant/30 rounded-2xl bg-surface-container-lowest">
         {records
           .slice()
           .reverse()
@@ -41,7 +41,7 @@ export function ProgressView({ screen, records, allRecords, fields, actions, spe
 
       {canAdd ? (
         <Pressable onPress={() => setAdding(true)} className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg">
-          <Icon name="add" size={26} color="#ffffff" />
+          <Icon name="add" size={26} color="#1000a9" />
         </Pressable>
       ) : null}
 

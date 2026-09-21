@@ -61,7 +61,7 @@ export function DashboardView({ screen, allRecords, computed, spec }: ScreenComp
           <Text className="text-xs uppercase tracking-wide text-on-surface-variant">Order total</Text>
           <Text className="text-2xl font-bold text-on-surface">${grandTotal.toFixed(2)}</Text>
         </View>
-        <View className="divide-y divide-black/5 rounded-2xl bg-surface-container-lowest">
+        <View className="divide-y divide-outline-variant/30 rounded-2xl bg-surface-container-lowest">
           {Object.entries(totals).map(([id, total]) => (
             <View key={id} className="flex-row items-center justify-between px-4 py-3">
               <Text className="text-sm text-on-surface">{labelFor(participants, id)}</Text>

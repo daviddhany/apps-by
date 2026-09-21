@@ -31,7 +31,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <AppHeader title="Needly" subtitle="Home" initial={user.name} />
+      <AppHeader title="Apps By" subtitle="Home" initial={user.name} />
       <main className="flex flex-col space-y-space-lg px-margin pb-space-xl pt-20 md:px-margin-desktop">
         <div className="flex flex-col space-y-space-xs pt-space-xs md:items-center md:text-center">
           <div className="inline-flex items-center gap-1.5 self-start rounded-full bg-surface-container-high px-3 py-1 font-label-md text-label-md text-on-surface-variant shadow-sm md:self-center">
@@ -39,7 +39,7 @@ export default async function HomePage() {
             <span className="animate-bounce">👋</span>
           </div>
           <h1 className="mt-1 font-display-mobile text-display-mobile tracking-tight text-on-surface md:font-display md:text-display">What do you need?</h1>
-          <p className="font-body-md text-body-md text-on-surface-variant md:max-w-xl">Tell Needly what you&rsquo;re trying to do — we&rsquo;ll build the tool in seconds.</p>
+          <p className="font-body-md text-body-md text-on-surface-variant md:max-w-xl">Tell Apps By what you&rsquo;re trying to do — we&rsquo;ll build the tool in seconds.</p>
         </div>
 
         <div className="md:mx-auto md:w-full md:max-w-2xl">

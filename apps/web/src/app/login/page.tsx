@@ -31,8 +31,8 @@ export default function LoginPage() {
     <main className="flex min-h-screen flex-col justify-center gap-space-lg px-6">
       <div className="flex flex-col items-center text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="Needly" className="mb-3 h-16 w-16 object-contain" />
-        <h1 className="font-display-mobile text-display-mobile font-extrabold tracking-tight text-on-surface">Needly</h1>
+        <img src="/logo.png" alt="Apps By" className="mb-3 h-16 w-16 object-contain" />
+        <h1 className="font-display-mobile text-display-mobile font-extrabold tracking-tight text-on-surface">Apps By</h1>
         <p className="mt-1 font-body-md text-body-md text-on-surface-variant">What do you need?</p>
       </div>
 

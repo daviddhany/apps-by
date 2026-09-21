@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { FieldDef } from "@needly/core";
+import { Icon } from "../Icon";
 
 interface Props {
   fields: FieldDef[];
@@ -99,16 +100,15 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
     );
   }
 
-  if (field.type === "multiselect" || field.type === "person") {
+  if (field.type === "multiselect") {
+    return <ChipListInput label={field.label} value={Array.isArray(value) ? (value as string[]) : []} onChange={onChange} />;
+  }
+
+  if (field.type === "person") {
     return (
       <label className="flex flex-col gap-1 font-label-sm text-label-sm text-on-surface-variant">
         {field.label}
-        <input
-          className={base}
-          placeholder={field.type === "multiselect" ? "Comma-separated names" : "Name"}
-          value={(value as string) ?? ""}
-          onChange={(e) => onChange(field.type === "multiselect" ? e.target.value.split(",").map((s) => s.trim()).filter(Boolean) : e.target.value)}
-        />
+        <input className={base} placeholder="Name" value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value)} />
       </label>
     );
   }
@@ -125,5 +125,66 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
         onChange={(e) => onChange(field.type === "number" || field.type === "money" ? Number(e.target.value) : e.target.value)}
       />
     </label>
+  );
+}
+
+/** "Add <name>" chip entry, one at a time, instead of a fiddly
+ * comma-separated text box — used for voting options, split-among names,
+ * passenger lists, etc. */
+function ChipListInput({ label, value, onChange }: { label: string; value: string[]; onChange: (v: string[]) => void }) {
+  const [draft, setDraft] = useState("");
+
+  function commit() {
+    const trimmed = draft.trim();
+    if (!trimmed || value.includes(trimmed)) {
+      setDraft("");
+      return;
+    }
+    onChange([...value, trimmed]);
+    setDraft("");
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+      {label}
+      <div className="flex gap-2">
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              commit();
+            }
+          }}
+          placeholder="Type a name and press Enter"
+          className="tap w-full rounded-DEFAULT bg-surface-container-low px-3.5 py-2.5 font-body-md text-body-md text-on-surface outline-none focus:shadow-[0_0_0_3px_rgba(37,99,235,0.15)]"
+        />
+        <button
+          type="button"
+          onClick={commit}
+          className="tap shrink-0 rounded-DEFAULT bg-surface-container-high px-3.5 font-label-md text-label-md font-semibold text-on-surface"
+        >
+          Add
+        </button>
+      </div>
+      {value.length > 0 ? (
+        <div className="flex flex-wrap gap-1.5">
+          {value.map((item) => (
+            <span key={item} className="flex items-center gap-1 rounded-full bg-primary-fixed py-1 pl-3 pr-1.5 font-label-sm text-label-sm text-on-primary-fixed">
+              {item}
+              <button
+                type="button"
+                onClick={() => onChange(value.filter((v) => v !== item))}
+                aria-label={`Remove ${item}`}
+                className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-black/10"
+              >
+                <Icon name="close" size={12} />
+              </button>
+            </span>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }

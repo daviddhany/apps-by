@@ -30,7 +30,7 @@ export function AppHeader({ title, subtitle, showBack, initial = "N" }: Props) {
             </button>
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src="/logo.png" alt="Needly" className="h-8 w-8 shrink-0 object-contain" />
+            <img src="/logo.png" alt="Apps By" className="h-8 w-8 shrink-0 object-contain" />
           )}
           <div className="flex min-w-0 flex-col leading-none">
             <span className="truncate font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">{title}</span>

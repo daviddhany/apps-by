@@ -1,4 +1,4 @@
-# Needly — "What do you need?"
+# Apps By — "What do you need?"
 
 A consumer platform that turns a described need ("we're 8 friends splitting a trip") into an
 instant, collaborative mini-app, built on a reusable Tool DNA + Universal Runtime instead of

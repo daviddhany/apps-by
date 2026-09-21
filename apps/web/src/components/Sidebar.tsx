@@ -22,8 +22,8 @@ export function Sidebar({ name }: { name: string }) {
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-[272px] flex-col border-r border-white/5 bg-surface-container-lowest/60 px-4 py-5 md:flex">
       <Link href="/" className="mb-6 flex items-center gap-2 px-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="Needly" className="h-8 w-8 object-contain" />
-        <span className="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">Needly</span>
+        <img src="/logo.png" alt="Apps By" className="h-8 w-8 object-contain" />
+        <span className="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">Apps By</span>
       </Link>
 
       <Link

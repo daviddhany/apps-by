@@ -338,14 +338,14 @@ function ShareSheet({
 
       <View className="flex-row gap-2">
         <Pressable
-          onPress={() => Linking.openURL(`https://wa.me/?text=${encodeURIComponent(`Join ${title} on Needly: ${link}`)}`)}
+          onPress={() => Linking.openURL(`https://wa.me/?text=${encodeURIComponent(`Join ${title} on Apps By: ${link}`)}`)}
           className="flex-1 flex-row items-center justify-center gap-1.5 rounded-2xl bg-surface-container-low py-2.5"
         >
           <Icon name="chat" size={18} color="#25D366" />
           <Text className="text-sm font-semibold text-on-surface">WhatsApp</Text>
         </Pressable>
         <Pressable
-          onPress={() => Linking.openURL(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(`Join ${title} on Needly`)}`)}
+          onPress={() => Linking.openURL(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(`Join ${title} on Apps By`)}`)}
           className="flex-1 flex-row items-center justify-center gap-1.5 rounded-2xl bg-surface-container-low py-2.5"
         >
           <Icon name="send" size={18} color="#0088CC" />

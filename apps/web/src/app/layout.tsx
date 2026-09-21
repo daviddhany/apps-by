@@ -5,12 +5,12 @@ import { Sidebar } from "@/components/Sidebar";
 import { getCurrentUser } from "@/server/auth";
 
 export const metadata: Metadata = {
-  title: "Needly — What do you need?",
+  title: "Apps By — What do you need?",
   description: "Describe what you need. Get an instant, collaborative mini-app.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Needly",
+    title: "Apps By",
   },
 };
 

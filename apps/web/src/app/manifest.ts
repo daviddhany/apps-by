@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Needly — What do you need?",
-    short_name: "Needly",
+    name: "Apps By — What do you need?",
+    short_name: "Apps By",
     description: "Describe a need. Get an instant, collaborative mini-app.",
     start_url: "/",
     display: "standalone",

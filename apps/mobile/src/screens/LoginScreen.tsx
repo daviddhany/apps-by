@@ -26,7 +26,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (screen: s
       <View className="flex-1 justify-center px-6 gap-6">
         <View className="items-center">
           <Image source={require("../../assets/logo.png")} className="mb-3 h-16 w-16" resizeMode="contain" />
-          <Text className="text-3xl font-extrabold tracking-tight text-on-surface">Needly</Text>
+          <Text className="text-3xl font-extrabold tracking-tight text-on-surface">Apps By</Text>
           <Text className="mt-1 text-base text-on-surface-variant">What do you need?</Text>
         </View>
 

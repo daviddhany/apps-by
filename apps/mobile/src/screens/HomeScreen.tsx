@@ -65,7 +65,7 @@ export function HomeScreen() {
 
   return (
     <View className="flex-1 bg-surface">
-      <AppHeader title="Needly" subtitle="Home" initial={user?.name ?? "N"} />
+      <AppHeader title="Apps By" subtitle="Home" initial={user?.name ?? "N"} />
       <ScrollView
         className="flex-1 px-4"
         contentContainerStyle={{ paddingTop: 16, paddingBottom: insets.bottom + 32, gap: 20 }}
@@ -76,7 +76,7 @@ export function HomeScreen() {
             <Text className="text-sm font-medium text-on-surface-variant">Hi {user?.name?.split(" ")[0] ?? "there"} 👋</Text>
           </View>
           <Text className="mt-1 text-4xl font-extrabold tracking-tight text-on-surface">What do you need?</Text>
-          <Text className="text-base text-on-surface-variant">Tell Needly what you&rsquo;re trying to do — we&rsquo;ll build the tool in seconds.</Text>
+          <Text className="text-base text-on-surface-variant">Tell Apps By what you&rsquo;re trying to do — we&rsquo;ll build the tool in seconds.</Text>
         </View>
 
         <NeedInput autoFocus={false} />

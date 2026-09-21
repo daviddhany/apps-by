@@ -255,8 +255,9 @@ export function AppRuntime({ appInstanceId, currentUserId }: { appInstanceId: st
         ) : null}
       </main>
 
-      {/* Floating AI "Modify App" pill */}
-      <div className="fixed bottom-24 right-4 z-40">
+      {/* Floating AI "Modify App" pill — sits above the per-screen "+" add
+          button (fixed bottom-24 right-5 z-30) so the two never overlap. */}
+      <div className="fixed bottom-44 right-4 z-40">
         <button
           onClick={() => setShowCommand(true)}
           className="group flex items-center gap-2 rounded-full bg-inverse-surface px-4 py-3 text-inverse-on-surface shadow-xl transition-all hover:shadow-2xl active:scale-95"
@@ -390,7 +391,7 @@ function ShareSheet({
 
       <div className="grid grid-cols-2 gap-2">
         <a
-          href={`https://wa.me/?text=${encodeURIComponent(`Join ${title} on Needly: ${link}`)}`}
+          href={`https://wa.me/?text=${encodeURIComponent(`Join ${title} on Apps By: ${link}`)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-1.5 rounded-DEFAULT bg-surface-container-low px-3 py-2.5 font-label-md text-label-md font-semibold text-on-surface transition-all hover:bg-surface-container-high active:scale-95"
@@ -399,7 +400,7 @@ function ShareSheet({
           <span>WhatsApp</span>
         </a>
         <a
-          href={`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(`Join ${title} on Needly`)}`}
+          href={`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(`Join ${title} on Apps By`)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-1.5 rounded-DEFAULT bg-surface-container-low px-3 py-2.5 font-label-md text-label-md font-semibold text-on-surface transition-all hover:bg-surface-container-high active:scale-95"

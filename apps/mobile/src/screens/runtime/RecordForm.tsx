@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, Pressable, Switch, ActivityIndicator } from "react-native";
 import type { FieldDef } from "@needly/core";
+import { Icon } from "../../components/Icon";
 
 interface Props {
   fields: FieldDef[];
@@ -79,15 +80,19 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
     );
   }
 
-  if (field.type === "multiselect" || field.type === "person") {
+  if (field.type === "multiselect") {
+    return <ChipListInput label={field.label} value={Array.isArray(value) ? (value as string[]) : []} onChange={onChange} />;
+  }
+
+  if (field.type === "person") {
     return (
       <View className="gap-1.5">
         <Text className="text-xs text-on-surface-variant">{field.label}</Text>
         <TextInput
-          placeholder={field.type === "multiselect" ? "Comma-separated names" : "Name"}
+          placeholder="Name"
           placeholderTextColor="#908fa0"
-          value={typeof value === "string" ? value : Array.isArray(value) ? value.join(", ") : ""}
-          onChangeText={(text) => onChange(field.type === "multiselect" ? text.split(",").map((s) => s.trim()).filter(Boolean) : text)}
+          value={typeof value === "string" ? value : ""}
+          onChangeText={onChange}
           className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
         />
       </View>
@@ -103,6 +108,55 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
         onChangeText={(text) => onChange(field.type === "number" || field.type === "money" ? Number(text) : text)}
         className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
       />
+    </View>
+  );
+}
+
+/** "Add <name>" chip entry, one at a time, instead of a fiddly
+ * comma-separated text box — used for voting options, split-among names,
+ * passenger lists, etc. */
+function ChipListInput({ label, value, onChange }: { label: string; value: string[]; onChange: (v: string[]) => void }) {
+  const [draft, setDraft] = useState("");
+
+  function commit() {
+    const trimmed = draft.trim();
+    if (!trimmed || value.includes(trimmed)) {
+      setDraft("");
+      return;
+    }
+    onChange([...value, trimmed]);
+    setDraft("");
+  }
+
+  return (
+    <View className="gap-1.5">
+      <Text className="text-xs text-on-surface-variant">{label}</Text>
+      <View className="flex-row gap-2">
+        <TextInput
+          value={draft}
+          onChangeText={setDraft}
+          onSubmitEditing={commit}
+          returnKeyType="done"
+          placeholder="Type a name, then tap Add"
+          placeholderTextColor="#908fa0"
+          className="flex-1 rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
+        />
+        <Pressable onPress={commit} className="items-center justify-center rounded-2xl bg-surface-container-high px-4">
+          <Text className="font-semibold text-on-surface">Add</Text>
+        </Pressable>
+      </View>
+      {value.length > 0 ? (
+        <View className="flex-row flex-wrap gap-1.5">
+          {value.map((item) => (
+            <View key={item} className="flex-row items-center gap-1.5 rounded-full bg-primary-fixed py-1 pl-3 pr-1.5">
+              <Text className="text-sm text-on-primary-fixed">{item}</Text>
+              <Pressable onPress={() => onChange(value.filter((v) => v !== item))} className="h-4 w-4 items-center justify-center rounded-full">
+                <Icon name="close" size={12} color="#07006c" />
+              </Pressable>
+            </View>
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }

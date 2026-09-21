@@ -135,6 +135,19 @@ export class HeuristicAIProvider implements AIProvider {
   async mutateApplication(command: string, spec: MiniAppSpecification, actorRole: Role): Promise<AIActionResult> {
     const text = command.trim();
 
+    // "add <button/field/page/tab/...>" describes a UI control, not a person
+    // to add — never mistake it for "add <name>" below. There's no
+    // custom-button concept in the runtime, so say so plainly instead of
+    // silently creating a bogus participant named e.g. "reset button".
+    const addControlMatch = text.match(/^add\s+(?:an?\s+)?(.+?)\s+(button|field|page|screen|tab|column|section|toggle|link)\b/i);
+    if (addControlMatch) {
+      return {
+        type: "clarify",
+        question:
+          "This app doesn't support custom buttons yet — only its data fields, screens, and rules can be changed. Try something like \"add a phone field\", \"add a page where we vote\", or \"remove the standings screen\".",
+      };
+    }
+
     // "add <name>" -> add to the primary person-like entity present in this spec
     const addPersonMatch = text.match(/^add\s+([a-z][a-z .'-]{1,40})\.?$/i);
     if (addPersonMatch) {

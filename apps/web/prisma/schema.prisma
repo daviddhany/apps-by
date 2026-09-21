@@ -1,0 +1,230 @@
+// Needly data model.
+// Provider is SQLite for zero-setup local dev; see ARCHITECTURE.md §0 for the
+// Postgres + pgvector production swap (embedding fields are plain JSON here
+// and compared in application code instead of a DB-side vector index).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String?  @unique
+  passwordHash String?
+  name         String
+  isGuest      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  memberships   AppMember[]
+  createdApps   AppInstance[]   @relation("AppCreator")
+  templates     Template[]
+  aiRequests    AIRequest[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+  invitations   Invitation[]    @relation("InvitationInviter")
+}
+
+model ToolDNA {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  category    String
+  description String
+  keywords    String // JSON string array
+  embedding   String // JSON number array (hashed bag-of-words vector, see src/ai/embeddings.ts)
+  isComposite Boolean  @default(false)
+  composesFrom String? // JSON string array of ToolDNA slugs, only for composite DNAs
+  createdAt   DateTime @default(now())
+
+  versions  ToolDNAVersion[]
+  templates Template[]
+}
+
+model ToolDNAVersion {
+  id             String   @id @default(cuid())
+  toolDnaId      String
+  toolDna        ToolDNA  @relation(fields: [toolDnaId], references: [id])
+  version        Int
+  definitionJson String // serialized ToolDnaDefinition (entities/screens/actions/etc.)
+  changelog      String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  appInstances AppInstance[]
+  templates    Template[]
+
+  @@unique([toolDnaId, version])
+}
+
+model Template {
+  id               String    @id @default(cuid())
+  toolDnaId        String
+  toolDna          ToolDNA   @relation(fields: [toolDnaId], references: [id])
+  toolDnaVersionId String
+  toolDnaVersion   ToolDNAVersion @relation(fields: [toolDnaVersionId], references: [id])
+  title            String
+  description      String
+  category         String
+  visibility       String    @default("private") // private | shared | public
+  creatorId        String?
+  creator          User?     @relation(fields: [creatorId], references: [id])
+  parentTemplateId String?
+  parentTemplate   Template? @relation("TemplateLineage", fields: [parentTemplateId], references: [id])
+  remixesOfThis    Template[] @relation("TemplateLineage")
+  usageCount       Int       @default(0)
+  remixCount       Int       @default(0)
+  saveCount        Int       @default(0)
+  qualityScore     Float     @default(0)
+  createdAt        DateTime  @default(now())
+
+  remixesFrom TemplateRemix[] @relation("RemixSource")
+  remixesTo   TemplateRemix[] @relation("RemixResult")
+  appInstances AppInstance[]
+}
+
+model TemplateRemix {
+  id               String   @id @default(cuid())
+  sourceTemplateId String
+  sourceTemplate   Template @relation("RemixSource", fields: [sourceTemplateId], references: [id])
+  resultTemplateId String
+  resultTemplate   Template @relation("RemixResult", fields: [resultTemplateId], references: [id])
+  instructionText  String // the NL remix instruction that produced the change
+  createdAt        DateTime @default(now())
+}
+
+model AppInstance {
+  id               String   @id @default(cuid())
+  title            String
+  icon             String   @default("sparkles")
+  toolDnaVersionId String
+  toolDnaVersion   ToolDNAVersion @relation(fields: [toolDnaVersionId], references: [id])
+  templateId       String?
+  template         Template? @relation(fields: [templateId], references: [id])
+  specJson         String // latest resolved MiniAppSpecification (mirrors latest MiniAppSpecification row)
+  status           String   @default("active") // active | archived
+  creatorId        String
+  creator          User     @relation("AppCreator", fields: [creatorId], references: [id])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  members       AppMember[]
+  data          AppData[]
+  joinCodes     JoinCode[]
+  specVersions  MiniAppSpecification[]
+  invitations   Invitation[]
+  aiMutations   AIMutation[]
+}
+
+model MiniAppSpecification {
+  id            String      @id @default(cuid())
+  appInstanceId String
+  appInstance   AppInstance @relation(fields: [appInstanceId], references: [id], onDelete: Cascade)
+  version       Int
+  specJson      String
+  changeSummary String? // human-readable description of what this version changed
+  createdAt     DateTime    @default(now())
+
+  @@unique([appInstanceId, version])
+}
+
+model AppMember {
+  id            String      @id @default(cuid())
+  appInstanceId String
+  appInstance   AppInstance @relation(fields: [appInstanceId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  role          String // owner | admin | editor | participant | viewer
+  joinedAt      DateTime    @default(now())
+
+  @@unique([appInstanceId, userId])
+}
+
+model AppData {
+  id            String      @id @default(cuid())
+  appInstanceId String
+  appInstance   AppInstance @relation(fields: [appInstanceId], references: [id], onDelete: Cascade)
+  entityType    String // e.g. "expense.participant", "expense.expense", "tournament.match"
+  data          String // validated JSON payload matching the entity's field schema
+  createdById   String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([appInstanceId, entityType])
+}
+
+model JoinCode {
+  id            String      @id @default(cuid())
+  code          String      @unique
+  appInstanceId String
+  appInstance   AppInstance @relation(fields: [appInstanceId], references: [id], onDelete: Cascade)
+  role          String      @default("participant")
+  maxUses       Int?
+  useCount      Int         @default(0)
+  expiresAt     DateTime?
+  createdAt     DateTime    @default(now())
+}
+
+model Invitation {
+  id            String      @id @default(cuid())
+  appInstanceId String
+  appInstance   AppInstance @relation(fields: [appInstanceId], references: [id], onDelete: Cascade)
+  inviterId     String
+  inviter       User        @relation("InvitationInviter", fields: [inviterId], references: [id])
+  email         String
+  role          String      @default("participant")
+  status        String      @default("pending") // pending | accepted | revoked
+  createdAt     DateTime    @default(now())
+}
+
+model AIRequest {
+  id           String   @id @default(cuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id])
+  appInstanceId String?
+  inputText    String
+  decision     String // chat_answer | reminder | mini_app | modify_app
+  provider     String // heuristic | anthropic
+  outputJson   String?
+  latencyMs    Int?
+  createdAt    DateTime @default(now())
+}
+
+model AIMutation {
+  id            String      @id @default(cuid())
+  aiRequestId   String?
+  appInstanceId String
+  appInstance   AppInstance @relation(fields: [appInstanceId], references: [id], onDelete: Cascade)
+  actorId       String
+  action        String
+  payloadJson   String
+  status        String      @default("proposed") // proposed | applied | rejected
+  reason        String?
+  createdAt     DateTime    @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id])
+  action     String
+  targetType String
+  targetId   String
+  beforeJson String?
+  afterJson  String?
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  payload   String // JSON
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+}

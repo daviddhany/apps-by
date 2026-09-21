@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Needly",
+    "slug": "needly",
+    "scheme": "needly",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#f9f9ff",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.needly.mobile"
+    },
+    "android": {
+      "package": "app.needly.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#f9f9ff",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "extra": {
+      "apiBaseUrl": "http://localhost:3000"
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
+  }
+}

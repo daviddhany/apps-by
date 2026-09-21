@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-bright": "#f9f9ff", "surface": "#f9f9ff", "inverse-surface": "#263143", "on-tertiary": "#ffffff", "primary": "#0037b0", "surface-container-lowest": "#ffffff", "on-primary": "#ffffff", "outline-variant": "#c4c5d7", "on-tertiary-container": "#ffc9b6", "on-surface-variant": "#434655", "tertiary-container": "#a33900", "on-error": "#ffffff", "secondary-fixed": "#89f5e7", "tertiary": "#7c2900", "on-secondary-fixed-variant": "#005049", "on-error-container": "#93000a", "background": "#f9f9ff", "secondary-container": "#86f2e4", "secondary": "#006a61", "on-primary-fixed": "#001551", "primary-container": "#1d4ed8", "surface-variant": "#d8e3fb", "on-secondary-fixed": "#00201d", "on-secondary-container": "#006f66", "on-secondary": "#ffffff", "on-tertiary-fixed": "#370e00", "outline": "#747686", "error-container": "#ffdad6", "surface-container-low": "#f0f3ff", "primary-fixed": "#dce1ff", "inverse-on-surface": "#ecf1ff", "surface-container-highest": "#d8e3fb", "tertiary-fixed": "#ffdbce", "secondary-fixed-dim": "#6bd8cb", "inverse-primary": "#b7c4ff", "error": "#ba1a1a", "surface-dim": "#cfdaf2", "on-primary-fixed-variant": "#0039b5", "surface-tint": "#2151da", "surface-container-high": "#dee8ff", "on-tertiary-fixed-variant": "#7f2b00", "on-surface": "#111c2d", "primary-fixed-dim": "#b7c4ff", "on-background": "#111c2d", "on-primary-container": "#cad3ff", "surface-container": "#e7eeff", "tertiary-fixed-dim": "#ffb599" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "gutter-tablet": "1.25rem", "space-xs": "0.25rem", "space-xl": "2rem", "margin-tablet": "1.5rem", "margin": "1rem", "gutter": "1rem", "margin-desktop": "2rem", "gutter-desktop": "1.5rem", "space-sm": "0.5rem", "space-md": "1rem", "space-lg": "1.5rem" }, fontFamily: { "headline-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "display-mobile": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "display": ["Plus Jakarta Sans"] }, fontSize: { "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "700" }], "display-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.025em", "fontWeight": "800" }], "body-lg": ["17px", { "lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "500" }], "body-md": ["15px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "700" }], "display": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "800" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#f9f9ff;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,16px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(17,28,45,0.04)] pt-safe transition-all"><div class="h-16 px-space-md flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-label="Go back" class="w-11 h-11 -ml-1.5 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors active:scale-95" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back_ios_new</span></button><img alt="Apps By Brand Icon" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1USXv-BUMS0Jqo61haHfH_bqTKi62leLdvS11TxMpAg5OKwFMX6jmUlsy-agQtZD3Wsqv9rwC2kcc6FN3upgIaygxPjardvmrTcdEKUC8KoyYmvujnLOHfZpaF4Jw4bTSAkKFnC7eZ_aVMprjq2LpXRnouU9jj_gxFVNo8G5EpTlzznEENASF0q3TW1Ufsq2w05jybna6zMn03vF0V5xYXH4X58Kx6LUj7SlQf-UgXIVFX4saLB8Qya1IQ"/><h1 class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-bold truncate">App Runner</h1></div><div class="flex items-center pl-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTD0Fij_lJQ8eor2mPtGziOeOFiMEo3JrkhRHHZRXT8czeeuJcWwLkrbBJLLlNUF76TJnw1cwKc5xqXH8kkwNFCkhEFNXgSwbZmpU3JQBDVuuPBB5FGo52cWS33QFJSA2RQMTB8Ti_Rs01iEIa7gTOz27i5Or0xA1ayXu5yuRE_6fDAmDbngYaluf7Uc3Qjx_DQ3_66GGbRKI4QjlMS1r1VNCeGVCMUP2rpO7I0_1wAPee65WfRAr3"/></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full relative px-space-md pb-12">
+<!-- Dynamic Ambient Backlight Glow -->
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 w-72 h-72 bg-secondary-container/30 blur-3xl pointer-events-none rounded-full"></div>
+<!-- Screen Top Bar Lockup -->
+<div class="flex items-center justify-between py-space-sm relative z-10">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span>Shared via Apps By</span>
+</div>
+<button aria-label="Close invite modal" class="w-10 h-10 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-all active:scale-90 shadow-sm" onclick="history.back()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Hero Invite Headline -->
+<div class="mt-space-sm mb-space-md text-center">
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Invite &amp; Join Trip</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Split expenses and log receipts together in real-time</p>
+</div>
+<!-- App Context Preview Card -->
+<section class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm mb-space-md transition-transform">
+<div class="flex items-start gap-space-md">
+<!-- Mini-App Tropical Icon Badge -->
+<div class="w-14 h-14 rounded-2xl bg-secondary-container text-on-secondary-container flex items-center justify-center text-3xl shadow-sm shrink-0">
+        🏝️
+      </div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Dahab Trip 2025</h3>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Active
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">Created by David • Blue Hole &amp; Lagoona</p>
+<p class="font-label-sm text-label-sm text-primary font-semibold mt-1">8,750 EGP logged</p>
+</div>
+</div>
+<!-- Traveling Friends Avatar Stack -->
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<div class="flex items-center -space-x-2 overflow-hidden py-1">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center shadow-sm">D</div>
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary font-label-md text-label-md flex items-center justify-center shadow-sm">M</div>
+<div class="w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary font-label-md text-label-md flex items-center justify-center shadow-sm">A</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface font-label-md text-label-md flex items-center justify-center shadow-sm">S</div>
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-label-md flex items-center justify-center shadow-sm">L</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center shadow-sm">+3</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">8 members traveling</span>
+</div>
+</section>
+<!-- High-Contrast QR Code Card with Scanner Aesthetic -->
+<section class="bg-surface-container-lowest rounded-lg p-6 shadow-md flex flex-col items-center mb-space-md relative overflow-hidden">
+<!-- QR Code Scan Frame -->
+<div class="relative p-4 rounded-2xl bg-surface-container-low/60 flex items-center justify-center">
+<!-- Tactile Optical Scanner Corner Accents -->
+<div class="absolute top-2 left-2 w-5 h-5 border-t-[3px] border-l-[3px] border-primary rounded-tl-md pointer-events-none"></div>
+<div class="absolute top-2 right-2 w-5 h-5 border-t-[3px] border-r-[3px] border-primary rounded-tr-md pointer-events-none"></div>
+<div class="absolute bottom-2 left-2 w-5 h-5 border-b-[3px] border-l-[3px] border-primary rounded-bl-md pointer-events-none"></div>
+<div class="absolute bottom-2 right-2 w-5 h-5 border-b-[3px] border-r-[3px] border-primary rounded-br-md pointer-events-none"></div>
+<!-- Scannable High-Density QR Geometry -->
+<div class="relative w-52 h-52 bg-white rounded-xl p-2 flex items-center justify-center shadow-inner">
+<svg class="w-full h-full text-on-surface" fill="currentColor" viewbox="0 0 160 160">
+<!-- Top Left Finder Pattern -->
+<rect height="40" rx="6" width="40" x="10" y="10"></rect>
+<rect fill="#FFFFFF" height="28" rx="4" width="28" x="16" y="16"></rect>
+<rect height="16" rx="2" width="16" x="22" y="22"></rect>
+<!-- Top Right Finder Pattern -->
+<rect height="40" rx="6" width="40" x="110" y="10"></rect>
+<rect fill="#FFFFFF" height="28" rx="4" width="28" x="116" y="16"></rect>
+<rect height="16" rx="2" width="16" x="122" y="22"></rect>
+<!-- Bottom Left Finder Pattern -->
+<rect height="40" rx="6" width="40" x="10" y="110"></rect>
+<rect fill="#FFFFFF" height="28" rx="4" width="28" x="16" y="116"></rect>
+<rect height="16" rx="2" width="16" x="22" y="122"></rect>
+<!-- Alignment Patterns & Data Grid Nodes -->
+<circle cx="60" cy="20" r="3.5"></circle>
+<circle cx="75" cy="20" r="3.5"></circle>
+<circle cx="90" cy="20" r="3.5"></circle>
+<circle cx="60" cy="35" r="3.5"></circle>
+<circle cx="85" cy="35" r="3.5"></circle>
+<circle cx="100" cy="35" r="3.5"></circle>
+<circle cx="60" cy="50" r="3.5"></circle>
+<circle cx="75" cy="50" r="3.5"></circle>
+<circle cx="20" cy="65" r="3.5"></circle>
+<circle cx="35" cy="65" r="3.5"></circle>
+<circle cx="50" cy="65" r="3.5"></circle>
+<circle cx="110" cy="65" r="3.5"></circle>
+<circle cx="125" cy="65" r="3.5"></circle>
+<circle cx="140" cy="65" r="3.5"></circle>
+<circle cx="20" cy="80" r="3.5"></circle>
+<circle cx="35" cy="80" r="3.5"></circle>
+<circle cx="125" cy="80" r="3.5"></circle>
+<circle cx="140" cy="80" r="3.5"></circle>
+<circle cx="20" cy="95" r="3.5"></circle>
+<circle cx="45" cy="95" r="3.5"></circle>
+<circle cx="110" cy="95" r="3.5"></circle>
+<circle cx="130" cy="95" r="3.5"></circle>
+<circle cx="60" cy="110" r="3.5"></circle>
+<circle cx="75" cy="110" r="3.5"></circle>
+<circle cx="95" cy="110" r="3.5"></circle>
+<circle cx="115" cy="110" r="3.5"></circle>
+<circle cx="135" cy="110" r="3.5"></circle>
+<circle cx="60" cy="125" r="3.5"></circle>
+<circle cx="80" cy="125" r="3.5"></circle>
+<circle cx="100" cy="125" r="3.5"></circle>
+<circle cx="120" cy="125" r="3.5"></circle>
+<circle cx="140" cy="125" r="3.5"></circle>
+<circle cx="60" cy="140" r="3.5"></circle>
+<circle cx="75" cy="140" r="3.5"></circle>
+<circle cx="90" cy="140" r="3.5"></circle>
+<circle cx="110" cy="140" r="3.5"></circle>
+<circle cx="130" cy="140" r="3.5"></circle>
+</svg>
+<!-- Centered Apps By Mini-App Badge Node -->
+<div class="absolute inset-0 m-auto w-12 h-12 rounded-xl bg-white p-1 shadow-md flex items-center justify-center">
+<img alt="Apps By Brand Seal" class="w-full h-full object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida/AEtjO1USXv-BUMS0Jqo61haHfH_bqTKi62leLdvS11TxMpAg5OKwFMX6jmUlsy-agQtZD3Wsqv9rwC2kcc6FN3upgIaygxPjardvmrTcdEKUC8KoyYmvujnLOHfZpaF4Jw4bTSAkKFnC7eZ_aVMprjq2LpXRnouU9jj_gxFVNo8G5EpTlzznEENASF0q3TW1Ufsq2w05jybna6zMn03vF0V5xYXH4X58Kx6LUj7SlQf-UgXIVFX4saLB8Qya1IQ"/>
+</div>
+</div>
+</div>
+<!-- Soft Scan Explainer -->
+<div class="mt-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-body-sm text-body-sm text-center">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+<span>Point any phone camera to launch</span>
+</div>
+</section>
+<!-- Large Segmented Trip Join Code Section -->
+<section class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm mb-space-md">
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-bold">Or enter 6-character code</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Instant Access</span>
+</div>
+<!-- Segmented Key Blocks -->
+<div class="flex items-center justify-center gap-1.5 sm:gap-2 select-all">
+<div class="w-11 h-13 py-2 bg-surface-container-low rounded-xl flex items-center justify-center font-display-mobile text-display-mobile text-primary font-extrabold shadow-sm">D</div>
+<div class="w-11 h-13 py-2 bg-surface-container-low rounded-xl flex items-center justify-center font-display-mobile text-display-mobile text-primary font-extrabold shadow-sm">7</div>
+<div class="w-11 h-13 py-2 bg-surface-container-low rounded-xl flex items-center justify-center font-display-mobile text-display-mobile text-primary font-extrabold shadow-sm">K</div>
+<div class="px-1 text-outline-variant font-headline-md text-headline-md font-bold">—</div>
+<div class="w-11 h-13 py-2 bg-surface-container-low rounded-xl flex items-center justify-center font-display-mobile text-display-mobile text-primary font-extrabold shadow-sm">4</div>
+<div class="w-11 h-13 py-2 bg-surface-container-low rounded-xl flex items-center justify-center font-display-mobile text-display-mobile text-primary font-extrabold shadow-sm">2</div>
+<div class="w-11 h-13 py-2 bg-surface-container-low rounded-xl flex items-center justify-center font-display-mobile text-display-mobile text-primary font-extrabold shadow-sm">P</div>
+</div>
+<!-- Quick Copy Action Button -->
+<button class="w-full mt-4 h-12 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98]" id="copyCodeBtn">
+<span class="material-symbols-outlined text-[20px]" id="copyCodeIcon">content_copy</span>
+<span id="copyCodeText">Copy Trip Code</span>
+</button>
+</section>
+<!-- Instant Share Actions Suite -->
+<section class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm mb-space-md flex flex-col gap-space-sm">
+<!-- Web Link Bar -->
+<div class="flex items-center justify-between gap-2 p-2 bg-surface-container-low rounded-full">
+<div class="flex items-center gap-2 pl-3 min-w-0">
+<span class="material-symbols-outlined text-[18px] text-primary shrink-0">link</span>
+<span class="font-body-sm text-body-sm text-on-surface truncate font-medium">appsby.me/dahab-d7k</span>
+</div>
+<button class="px-4 py-2 rounded-full bg-primary text-on-primary font-label-sm text-label-sm shrink-0 transition-transform active:scale-95 shadow-sm" id="copyLinkBtn">
+        Copy Link
+      </button>
+</div>
+<!-- Quick Messaging Direct Action Grid -->
+<div class="grid grid-cols-2 gap-space-sm mt-1">
+<!-- WhatsApp Group Share Button -->
+<button class="h-12 rounded-full bg-[#E7F7EE] hover:bg-[#D3F1E0] text-[#0A5C36] font-label-md text-label-md flex items-center justify-center gap-2 px-3 transition-transform active:scale-[0.98]" id="shareWhatsAppBtn">
+<svg class="w-5 h-5 fill-current shrink-0" viewbox="0 0 24 24">
+<path d="M12.031 2C6.5 2 2 6.477 2 12.008c0 2.115.658 4.077 1.782 5.694L2 22l4.475-1.74a9.98 9.98 0 0 0 5.556 1.748c5.531 0 10.031-4.477 10.031-10s-4.5-10-10.031-10zm5.836 14.184c-.244.686-1.42 1.298-1.956 1.378-.49.074-1.129.105-3.633-.929-3.203-1.322-5.263-4.577-5.422-4.789-.16-.212-1.3-1.732-1.3-3.303 0-1.572.822-2.348 1.116-2.666.293-.318.64-.398.854-.398.214 0 .428.002.614.012.196.01.458-.075.717.545.265.635.908 2.215.986 2.375.078.16.13.348.024.56-.106.213-.16.345-.317.531-.157.186-.33.415-.472.557-.16.16-.328.334-.141.654.187.32.83 1.365 1.78 2.21 1.22 1.088 2.25 1.425 2.57 1.585.32.16.507.134.694-.08.187-.213.799-.93 1.012-1.249.213-.32.428-.266.72-.16.293.106 1.86.877 2.18 1.037.32.16.533.24.613.373.08.134.08.775-.164 1.46z"></path>
+</svg>
+<span class="truncate">WhatsApp Group</span>
+</button>
+<!-- Telegram / iMessage -->
+<button class="h-12 rounded-full bg-[#EBF5FF] hover:bg-[#D8ECFE] text-[#0A579E] font-label-md text-label-md flex items-center justify-center gap-2 px-3 transition-transform active:scale-[0.98]" id="shareTelegramBtn">
+<span class="material-symbols-outlined text-[20px] shrink-0">send</span>
+<span class="truncate">Send in Chat</span>
+</button>
+</div>
+<!-- Native System Share Sheet Trigger -->
+<button class="w-full h-12 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 transition-all active:scale-[0.98]" id="systemShareBtn">
+<span class="material-symbols-outlined text-[19px]">ios_share</span>
+<span>More Sharing Options</span>
+</button>
+</section>
+<!-- Zero-Friction Web-Only Assurance Banner -->
+<aside class="bg-surface-container-low rounded-lg p-space-md flex items-start gap-3 text-on-surface-variant">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div class="flex-1">
+<h4 class="font-label-lg text-label-lg text-on-surface font-bold">Zero Friction Access</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-relaxed">
+        Friends can view balances, add expenses, and scan receipts instantly on the web without downloading an app or setting up a password.
+      </p>
+</div>
+</aside>
+<!-- Interactive Client Micro-Script -->
+<script>
+    (function() {
+      // Copy Code interaction
+      const copyCodeBtn = document.getElementById('copyCodeBtn');
+      const copyCodeIcon = document.getElementById('copyCodeIcon');
+      const copyCodeText = document.getElementById('copyCodeText');
+
+      if (copyCodeBtn) {
+        copyCodeBtn.addEventListener('click', function() {
+          navigator.clipboard?.writeText('D7K-42P');
+          copyCodeIcon.textContent = 'check';
+          copyCodeText.textContent = 'Copied to Clipboard!';
+          copyCodeBtn.classList.add('bg-secondary-fixed', 'text-on-secondary-fixed');
+          setTimeout(() => {
+            copyCodeIcon.textContent = 'content_copy';
+            copyCodeText.textContent = 'Copy Trip Code';
+            copyCodeBtn.classList.remove('bg-secondary-fixed', 'text-on-secondary-fixed');
+          }, 2200);
+        });
+      }
+
+      // Copy Link interaction
+      const copyLinkBtn = document.getElementById('copyLinkBtn');
+      if (copyLinkBtn) {
+        copyLinkBtn.addEventListener('click', function() {
+          navigator.clipboard?.writeText('https://appsby.me/dahab-d7k');
+          const originalText = copyLinkBtn.textContent;
+          copyLinkBtn.textContent = 'Copied!';
+          copyLinkBtn.classList.replace('bg-primary', 'bg-secondary');
+          setTimeout(() => {
+            copyLinkBtn.textContent = originalText;
+            copyLinkBtn.classList.replace('bg-secondary', 'bg-primary');
+          }, 2000);
+        });
+      }
+
+      // Native share interaction
+      const systemShareBtn = document.getElementById('systemShareBtn');
+      if (systemShareBtn && navigator.share) {
+        systemShareBtn.addEventListener('click', function() {
+          navigator.share({
+            title: 'Join Dahab Trip on Apps By',
+            text: 'Split expenses and log receipts for Dahab Trip! Join with code: D7K-42P',
+            url: 'https://appsby.me/dahab-d7k',
+          }).catch(() => {});
+        });
+      }
+
+      // WhatsApp quick share
+      const shareWhatsAppBtn = document.getElementById('shareWhatsAppBtn');
+      if (shareWhatsAppBtn) {
+        shareWhatsAppBtn.addEventListener('click', function() {
+          const msg = encodeURIComponent('Join Dahab Trip on Apps By to split expenses: https://appsby.me/dahab-d7k (Code: D7K-42P)');
+          window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+        });
+      }
+
+      // Chat share fallback
+      const shareTelegramBtn = document.getElementById('shareTelegramBtn');
+      if (shareTelegramBtn) {
+        shareTelegramBtn.addEventListener('click', function() {
+          const msg = encodeURIComponent('Join Dahab Trip on Apps By: https://appsby.me/dahab-d7k (Code: D7K-42P)');
+          window.open(`https://t.me/share/url?url=https://appsby.me/dahab-d7k&text=${msg}`, '_blank');
+        });
+      }
+    })();
+  </script>
+</div></main><div class="fixed bottom-0 inset-x-0 z-40 pb-safe pointer-events-none flex justify-center pb-2"><div class="w-32 h-1 bg-on-surface/20 rounded-full"></div></div></body></html>

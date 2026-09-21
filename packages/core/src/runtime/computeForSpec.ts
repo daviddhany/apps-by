@@ -1,5 +1,6 @@
 import type { MiniAppSpecification } from "../types";
 import { computeBalances, computeStandings, tallyVotes, computeStreak, type Participant, type Expense, type Match } from "./compute";
+import { evaluateComputedFormula } from "../primitives/computeEngine";
 
 export interface AppDataRecord {
   id: string;
@@ -17,6 +18,14 @@ export function computeForSpec(spec: MiniAppSpecification, records: AppDataRecor
   const out: Record<string, unknown> = {};
 
   for (const c of spec.computed) {
+    // Generic primitive path: a formula-carrying computed entry is evaluated
+    // by the shared expression engine instead of a hardcoded case below —
+    // this is what lets a schema built entirely from primitives (no
+    // per-concept code) still get a derived value like a tally or a sum.
+    if (c.formula) {
+      out[c.key] = evaluateComputedFormula(c.formula, records, spec.entities);
+      continue;
+    }
     switch (c.key) {
       case "expense.balances": {
         const participants = byType(records, "expense.participant").map((r) => ({ id: r.id, ...r.data })) as Participant[];

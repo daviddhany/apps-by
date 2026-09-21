@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { validateExpression } from "../primitives/expression";
 
 export const FieldTypeSchema = z.enum([
   "text",
@@ -46,6 +47,7 @@ export const ComponentKeySchema = z.enum([
   "meeting_scheduler",
   "trivia_quiz",
   "daily_journal",
+  "poll",
 ]);
 
 export const ScreenDefSchema = z.object({
@@ -55,6 +57,7 @@ export const ScreenDefSchema = z.object({
   component: ComponentKeySchema,
   entity: z.string().optional(),
   config: z.record(z.unknown()).optional(),
+  binding: z.record(z.string()).optional(),
 });
 
 export const ActionNameSchema = z.enum([
@@ -87,13 +90,18 @@ export const ActionNameSchema = z.enum([
 
 export const RoleSchema = z.enum(["owner", "admin", "editor", "participant", "viewer"]);
 
+export const ActionVerbSchema = z.enum(["create_record", "update_record", "delete_record"]);
+
 export const ActionDefSchema = z.object({
   name: ActionNameSchema,
   entity: z.string().optional(),
   label: z.string(),
   destructive: z.boolean().optional(),
   allowedRoles: z.array(RoleSchema),
-  payloadSchemaKey: z.string(),
+  payloadSchemaKey: z.string().optional(),
+  verb: ActionVerbSchema.optional(),
+  guard: z.string().optional(),
+  effects: z.record(z.string()).optional(),
 });
 
 export const RuleDefSchema = z.object({
@@ -115,23 +123,52 @@ export const ComputedDefSchema = z.object({
   key: z.string(),
   label: z.string(),
   dependsOn: z.array(z.string()),
+  formula: z.string().optional(),
 });
 
-export const MiniAppSpecificationSchema = z.object({
-  version: z.number().int().nonnegative(),
-  toolDnaSlug: z.array(z.string().min(1)).min(1),
-  title: z.string().min(1).max(80),
-  icon: z.string().min(1),
-  entities: z.array(z.string()),
-  fields: z.record(z.array(FieldDefSchema)),
-  screens: z.array(ScreenDefSchema).min(1),
-  features: z.array(z.string()),
-  settings: z.record(z.unknown()),
-  rules: z.array(RuleDefSchema),
-  roles: z.array(RoleDefSchema),
-  actions: z.array(ActionDefSchema),
-  computed: z.array(ComputedDefSchema),
-});
+export const MiniAppSpecificationSchema = z
+  .object({
+    version: z.number().int().nonnegative(),
+    toolDnaSlug: z.array(z.string().min(1)).min(1),
+    title: z.string().min(1).max(80),
+    icon: z.string().min(1),
+    entities: z.array(z.string()),
+    fields: z.record(z.array(FieldDefSchema)),
+    screens: z.array(ScreenDefSchema).min(1),
+    features: z.array(z.string()),
+    settings: z.record(z.unknown()),
+    rules: z.array(RuleDefSchema),
+    roles: z.array(RoleDefSchema),
+    actions: z.array(ActionDefSchema),
+    computed: z.array(ComputedDefSchema),
+  })
+  .superRefine((spec, ctx) => {
+    // Generic primitive path: every formula/guard/effect string is parsed
+    // and checked against this spec's own collections/fields BEFORE the
+    // spec is ever accepted — a bad formula fails validation here, it never
+    // reaches the database or gets a chance to run. See
+    // primitives/expression.ts's validateExpression for the actual rules.
+    const collections: Record<string, Set<string>> = {};
+    for (const entity of spec.entities) {
+      collections[entity] = new Set((spec.fields[entity] ?? []).map((f) => f.key));
+    }
+
+    function report(path: (string | number)[], formula: string) {
+      for (const message of validateExpression(formula, { collections })) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path, message });
+      }
+    }
+
+    spec.actions.forEach((action, i) => {
+      if (action.guard) report(["actions", i, "guard"], action.guard);
+      for (const [field, formula] of Object.entries(action.effects ?? {})) {
+        report(["actions", i, "effects", field], formula);
+      }
+    });
+    spec.computed.forEach((c, i) => {
+      if (c.formula) report(["computed", i, "formula"], c.formula);
+    });
+  });
 
 export const StructuredMutationSchema = z.object({
   action: ActionNameSchema,

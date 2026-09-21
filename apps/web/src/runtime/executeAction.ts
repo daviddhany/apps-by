@@ -1,10 +1,11 @@
 import { db } from "@/server/db";
 import { publish } from "@/server/realtime";
 import { ActionPayloadSchemas } from "@needly/core";
-import type { MiniAppSpecification, Role, StructuredMutation } from "@needly/core";
+import type { ActionDef, MiniAppSpecification, Role, StructuredMutation } from "@needly/core";
 import { resolvePersonRef, resolveManyPersonRefs, findByLabel } from "./resolve";
 import { advanceBracket, generateBracket } from "@needly/core";
 import { checkActionAllowed, PermissionError } from "@needly/core";
+import { planGenericAction, ActionEngineError, type GenericActionRuntimeRecord } from "@needly/core";
 
 export class ActionError extends Error {
   status: number;
@@ -36,7 +37,9 @@ export async function executeAction({ appInstanceId, actorId, actorRole, spec, m
     throw err;
   }
 
-  const result = await runExecutor(appInstanceId, actorId, actionDef.payloadSchemaKey, mutation);
+  const result = actionDef.verb
+    ? await runGenericExecutor(appInstanceId, actorId, actorRole, actionDef, mutation, spec)
+    : await runExecutor(appInstanceId, actorId, actionDef.payloadSchemaKey!, mutation);
 
   await db.auditLog.create({
     data: {
@@ -51,6 +54,36 @@ export async function executeAction({ appInstanceId, actorId, actorRole, spec, m
   publish(appInstanceId, { type: "data.changed", entityType: mutation.entity, payload: result, at: new Date().toISOString() });
 
   return result;
+}
+
+/**
+ * Generic primitive path: any ActionDef carrying a `verb` (see
+ * types/index.ts) is planned by the shared, DB-agnostic planGenericAction()
+ * and executed here — no per-concept switch-case needed. This is what lets
+ * a schema built entirely from primitives (no hand-written Tool DNA) still
+ * get real, allowlisted mutations.
+ */
+async function runGenericExecutor(appInstanceId: string, actorId: string, actorRole: Role, actionDef: ActionDef, mutation: StructuredMutation, spec: MiniAppSpecification) {
+  const rows = await db.appData.findMany({ where: { appInstanceId } });
+  const allRecords: GenericActionRuntimeRecord[] = rows.map((r) => ({ id: r.id, entityType: r.entityType, data: JSON.parse(r.data) }));
+
+  try {
+    const plan = planGenericAction(actionDef, { actorId, actorRole, payload: mutation.payload, allRecords, knownCollections: spec.entities });
+    switch (plan.op) {
+      case "create":
+        return await db.appData.create({ data: { appInstanceId, entityType: plan.collection, data: JSON.stringify(plan.data), createdById: actorId } });
+      case "update": {
+        const existing = await db.appData.findFirstOrThrow({ where: { id: plan.recordId, appInstanceId } });
+        const merged = { ...JSON.parse(existing.data), ...plan.data };
+        return await db.appData.update({ where: { id: plan.recordId }, data: { data: JSON.stringify(merged) } });
+      }
+      case "delete":
+        return await db.appData.delete({ where: { id: plan.recordId } });
+    }
+  } catch (err) {
+    if (err instanceof ActionEngineError) throw new ActionError(err.message, err.status);
+    throw err;
+  }
 }
 
 async function runExecutor(appInstanceId: string, actorId: string, schemaKey: string, mutation: StructuredMutation) {

@@ -26,3 +26,7 @@ export * from "./runtime/compute";
 export * from "./runtime/computeForSpec";
 export * from "./runtime/patchSpec";
 export * from "./runtime/permissions";
+
+export * from "./primitives/expression";
+export * from "./primitives/actionEngine";
+export * from "./primitives/computeEngine";

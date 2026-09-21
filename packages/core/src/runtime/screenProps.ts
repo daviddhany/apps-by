@@ -20,6 +20,7 @@ export interface MutationInput {
 }
 
 export interface ScreenComponentProps {
+  appInstanceId: string;
   spec: MiniAppSpecification;
   screen: ScreenDef;
   records: RuntimeRecord[]; // records matching screen.entity

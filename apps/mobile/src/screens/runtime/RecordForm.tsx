@@ -1,16 +1,20 @@
 import { useState } from "react";
-import { View, Text, TextInput, Pressable, Switch, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, Pressable, Switch, ActivityIndicator, Image } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import type { FieldDef } from "@needly/core";
 import { Icon } from "../../components/Icon";
+import { getApiBaseUrl } from "../../api/config";
+import { getToken } from "../../api/tokenStore";
 
 interface Props {
+  appInstanceId: string;
   fields: FieldDef[];
   submitLabel: string;
   onSubmit: (values: Record<string, unknown>) => Promise<void>;
   onCancel: () => void;
 }
 
-export function RecordForm({ fields, submitLabel, onSubmit, onCancel }: Props) {
+export function RecordForm({ appInstanceId, fields, submitLabel, onSubmit, onCancel }: Props) {
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     const initial: Record<string, unknown> = {};
     for (const f of fields) if (f.default !== undefined) initial[f.key] = f.default;
@@ -34,9 +38,15 @@ export function RecordForm({ fields, submitLabel, onSubmit, onCancel }: Props) {
   return (
     <View className="gap-3">
       {fields
-        .filter((f) => f.key !== "createdAt" && !["image", "location", "rating", "status"].includes(f.type))
+        .filter((f) => f.key !== "createdAt" && !["location", "rating", "status"].includes(f.type))
         .map((field) => (
-          <FieldInput key={field.key} field={field} value={values[field.key]} onChange={(v) => setValues((prev) => ({ ...prev, [field.key]: v }))} />
+          <FieldInput
+            key={field.key}
+            appInstanceId={appInstanceId}
+            field={field}
+            value={values[field.key]}
+            onChange={(v) => setValues((prev) => ({ ...prev, [field.key]: v }))}
+          />
         ))}
       {error ? <Text className="text-sm text-error">{error}</Text> : null}
       <View className="mt-1 flex-row gap-2">
@@ -51,7 +61,21 @@ export function RecordForm({ fields, submitLabel, onSubmit, onCancel }: Props) {
   );
 }
 
-function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknown; onChange: (v: unknown) => void }) {
+function FieldInput({
+  appInstanceId,
+  field,
+  value,
+  onChange,
+}: {
+  appInstanceId: string;
+  field: FieldDef;
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
+  if (field.type === "image") {
+    return <ImageUploadInput appInstanceId={appInstanceId} label={field.label} value={(value as string) ?? ""} onChange={onChange} />;
+  }
+
   if (field.type === "boolean") {
     return (
       <View className="flex-row items-center justify-between rounded-2xl bg-surface-container-low px-3.5 py-3">
@@ -108,6 +132,90 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
         onChangeText={(text) => onChange(field.type === "number" || field.type === "money" ? Number(text) : text)}
         className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
       />
+    </View>
+  );
+}
+
+function ImageUploadInput({
+  appInstanceId,
+  label,
+  value,
+  onChange,
+}: {
+  appInstanceId: string;
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function pickAndUpload() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      setError("Photo library access is needed to add a picture.");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ["images"], quality: 0.8 });
+    if (result.canceled || !result.assets[0]) return;
+
+    const asset = result.assets[0];
+    setUploading(true);
+    setError(null);
+    try {
+      const token = await getToken();
+      const form = new FormData();
+      const filename = asset.fileName ?? `photo-${Date.now()}.jpg`;
+      const mimeType = asset.mimeType ?? "image/jpeg";
+      // React Native's fetch/FormData accepts this {uri,name,type} shape in
+      // place of a Blob for a file field.
+      form.append("file", { uri: asset.uri, name: filename, type: mimeType } as unknown as Blob);
+
+      const res = await fetch(`${getApiBaseUrl()}/api/apps/${appInstanceId}/upload`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: form,
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error ?? "Upload failed");
+      onChange(body.url as string);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <View className="gap-1.5">
+      <Text className="text-xs text-on-surface-variant">{label}</Text>
+      {value ? (
+        <View className="overflow-hidden rounded-2xl bg-surface-container-low">
+          <Image source={{ uri: `${getApiBaseUrl()}${value}` }} style={{ width: "100%", height: 160 }} resizeMode="cover" />
+          <Pressable
+            onPress={() => onChange("")}
+            className="absolute right-2 top-2 h-8 w-8 items-center justify-center rounded-full bg-black/60"
+          >
+            <Icon name="close" size={16} color="#ffffff" />
+          </Pressable>
+        </View>
+      ) : (
+        <Pressable
+          onPress={pickAndUpload}
+          disabled={uploading}
+          className="flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-outline-variant/50 bg-surface-container-low py-6"
+        >
+          {uploading ? (
+            <ActivityIndicator color="#c0c1ff" />
+          ) : (
+            <>
+              <Icon name="add" size={20} color="#c7c4d7" />
+              <Text className="font-medium text-on-surface-variant">Add a photo</Text>
+            </>
+          )}
+        </Pressable>
+      )}
+      {error ? <Text className="text-sm text-error">{error}</Text> : null}
     </View>
   );
 }

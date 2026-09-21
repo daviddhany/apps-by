@@ -13,7 +13,7 @@ import { Icon } from "@/components/Icon";
  * than reusing "voting") because every screen component in this runtime is
  * tied to one Tool DNA's namespace (see ARCHITECTURE.md §3/§5): this one
  * reads/writes "meeting.meeting" and "meeting.availability" records. */
-export function MeetingSchedulerView({ screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
+export function MeetingSchedulerView({ appInstanceId, screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const canPropose = canDo(actions, "add", role);
   const canMark = canDo(actions, "vote", role);
@@ -97,6 +97,7 @@ export function MeetingSchedulerView({ screen, records, allRecords, fields, acti
       {adding ? (
         <BottomSheet title="Propose a meeting" onClose={() => setAdding(false)}>
           <RecordForm
+            appInstanceId={appInstanceId}
             fields={fields}
             submitLabel="Propose"
             onCancel={() => setAdding(false)}

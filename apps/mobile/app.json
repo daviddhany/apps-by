@@ -30,7 +30,13 @@
       "apiBaseUrl": "http://localhost:3000"
     },
     "plugins": [
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Apps By needs access to your photos so you can attach one to a voting option, expense receipt, or game entry."
+        }
+      ]
     ]
   }
 }

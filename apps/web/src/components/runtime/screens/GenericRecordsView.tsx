@@ -8,7 +8,7 @@ import { BottomSheet } from "@/components/BottomSheet";
 
 /** Renders as cards, a table, or a plain list depending on screen.component —
  * shared because all three are "records of one entity, optionally addable". */
-export function GenericRecordsView({ spec, screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
+export function GenericRecordsView({ appInstanceId, spec, screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const addAction = actions.find((a) => a.name === "add");
   const canAdd = canDo(actions, "add", role);
@@ -65,6 +65,7 @@ export function GenericRecordsView({ spec, screen, records, allRecords, fields, 
       {adding ? (
         <BottomSheet title={`Add ${screen.title.replace(/s$/, "")}`} onClose={() => setAdding(false)}>
           <RecordForm
+            appInstanceId={appInstanceId}
             fields={fields}
             submitLabel="Add"
             onCancel={() => setAdding(false)}

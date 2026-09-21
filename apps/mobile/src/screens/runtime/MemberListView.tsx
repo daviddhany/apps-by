@@ -6,7 +6,7 @@ import { RecordForm } from "./RecordForm";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Icon } from "../../components/Icon";
 
-export function MemberListView({ screen, records, fields, actions, role, members, onMutate }: ScreenComponentProps) {
+export function MemberListView({ appInstanceId, screen, records, fields, actions, role, members, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const canAdd = canDo(actions, "add", role);
 
@@ -52,6 +52,7 @@ export function MemberListView({ screen, records, fields, actions, role, members
 
       <BottomSheet visible={adding} title="Add person" onClose={() => setAdding(false)}>
         <RecordForm
+          appInstanceId={appInstanceId}
           fields={fields}
           submitLabel="Add"
           onCancel={() => setAdding(false)}

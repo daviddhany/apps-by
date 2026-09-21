@@ -6,7 +6,7 @@ import { canDo } from "../types";
 import { RecordForm } from "../RecordForm";
 import { BottomSheet } from "@/components/BottomSheet";
 
-export function VotingView({ screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
+export function VotingView({ appInstanceId, screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const canCreate = canDo(actions, "add", role);
   const canVote = canDo(actions, "vote", role);
@@ -78,6 +78,7 @@ export function VotingView({ screen, records, allRecords, fields, actions, role,
       {adding ? (
         <BottomSheet title="New poll" onClose={() => setAdding(false)}>
           <RecordForm
+            appInstanceId={appInstanceId}
             fields={fields}
             submitLabel="Create"
             onCancel={() => setAdding(false)}

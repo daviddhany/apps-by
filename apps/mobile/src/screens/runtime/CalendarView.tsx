@@ -8,7 +8,7 @@ import { Icon } from "../../components/Icon";
 
 // Simplified calendar: a chronological agenda list, same simplification as
 // the web runtime (see ARCHITECTURE.md) — no month-grid widget.
-export function CalendarView({ screen, records, allRecords, fields, actions, role, onMutate }: ScreenComponentProps) {
+export function CalendarView({ appInstanceId, screen, records, allRecords, fields, actions, role, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const canAdd = canDo(actions, "add", role) || canDo(actions, "reserve", role);
   const dateField = fields.find((f) => f.type === "date")?.key ?? "date";
@@ -52,6 +52,7 @@ export function CalendarView({ screen, records, allRecords, fields, actions, rol
 
       <BottomSheet visible={adding} title={`Add ${screen.title.replace(/s$/, "")}`} onClose={() => setAdding(false)}>
         <RecordForm
+          appInstanceId={appInstanceId}
           fields={fields}
           submitLabel="Add"
           onCancel={() => setAdding(false)}

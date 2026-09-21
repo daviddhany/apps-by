@@ -218,6 +218,7 @@ export function AppRuntimeScreen() {
 
         {ActiveComponent && activeScreen ? (
           <ActiveComponent
+            appInstanceId={appInstanceId}
             spec={app.spec}
             screen={activeScreen}
             records={records}

@@ -254,6 +254,7 @@ export function AppRuntime({ appInstanceId, currentUserId }: { appInstanceId: st
 
         {ActiveComponent && activeScreen ? (
           <ActiveComponent
+            appInstanceId={appInstanceId}
             spec={app.spec}
             screen={activeScreen}
             records={records}

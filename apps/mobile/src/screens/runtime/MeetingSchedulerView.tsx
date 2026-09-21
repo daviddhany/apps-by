@@ -9,7 +9,7 @@ import { Icon } from "../../components/Icon";
 /** Mirrors apps/web/.../MeetingSchedulerView.tsx — propose a few times, let
  * the group mark when they're free, surface whichever time has the most
  * marks. Reads/writes "meeting.meeting" and "meeting.availability". */
-export function MeetingSchedulerView({ screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
+export function MeetingSchedulerView({ appInstanceId, screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const canPropose = canDo(actions, "add", role);
   const canMark = canDo(actions, "vote", role);
@@ -93,6 +93,7 @@ export function MeetingSchedulerView({ screen, records, allRecords, fields, acti
 
       <BottomSheet visible={adding} title="Propose a meeting" onClose={() => setAdding(false)}>
         <RecordForm
+          appInstanceId={appInstanceId}
           fields={fields}
           submitLabel="Propose"
           onCancel={() => setAdding(false)}

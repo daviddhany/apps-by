@@ -6,7 +6,7 @@ import { canDo, labelFor } from "../types";
 import { RecordForm } from "../RecordForm";
 import { BottomSheet } from "@/components/BottomSheet";
 
-export function ProgressView({ screen, records, allRecords, fields, actions, spec, role, computed, onMutate }: ScreenComponentProps) {
+export function ProgressView({ appInstanceId, screen, records, allRecords, fields, actions, spec, role, computed, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const canAdd = canDo(actions, "add", role);
   const goal = Number(spec.settings.goalAmount ?? 0);
@@ -48,6 +48,7 @@ export function ProgressView({ screen, records, allRecords, fields, actions, spe
       {adding ? (
         <BottomSheet title="Add contribution" onClose={() => setAdding(false)}>
           <RecordForm
+            appInstanceId={appInstanceId}
             fields={fields}
             submitLabel="Add"
             onCancel={() => setAdding(false)}

@@ -6,7 +6,7 @@ import { canDo, labelFor } from "../types";
 import { RecordForm } from "../RecordForm";
 import { BottomSheet } from "@/components/BottomSheet";
 
-export function ChecklistView({ screen, records, allRecords, fields, actions, role, onMutate }: ScreenComponentProps) {
+export function ChecklistView({ appInstanceId, screen, records, allRecords, fields, actions, role, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const canAdd = canDo(actions, "add", role);
   const canComplete = canDo(actions, "complete", role) || canDo(actions, "checkin", role);
@@ -58,6 +58,7 @@ export function ChecklistView({ screen, records, allRecords, fields, actions, ro
       {adding ? (
         <BottomSheet title="Add item" onClose={() => setAdding(false)}>
           <RecordForm
+            appInstanceId={appInstanceId}
             fields={fields}
             submitLabel="Add"
             onCancel={() => setAdding(false)}

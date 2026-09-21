@@ -5,13 +5,14 @@ import type { FieldDef } from "@needly/core";
 import { Icon } from "../Icon";
 
 interface Props {
+  appInstanceId: string;
   fields: FieldDef[];
   submitLabel: string;
   onSubmit: (values: Record<string, unknown>) => Promise<void>;
   onCancel: () => void;
 }
 
-export function RecordForm({ fields, submitLabel, onSubmit, onCancel }: Props) {
+export function RecordForm({ appInstanceId, fields, submitLabel, onSubmit, onCancel }: Props) {
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     const initial: Record<string, unknown> = {};
     for (const f of fields) if (f.default !== undefined) initial[f.key] = f.default;
@@ -41,6 +42,7 @@ export function RecordForm({ fields, submitLabel, onSubmit, onCancel }: Props) {
         .map((field) => (
           <FieldInput
             key={field.key}
+            appInstanceId={appInstanceId}
             field={field}
             value={values[field.key]}
             onChange={(v) => setValues((prev) => ({ ...prev, [field.key]: v }))}
@@ -63,13 +65,27 @@ export function RecordForm({ fields, submitLabel, onSubmit, onCancel }: Props) {
   );
 }
 
-function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknown; onChange: (v: unknown) => void }) {
+function FieldInput({
+  appInstanceId,
+  field,
+  value,
+  onChange,
+}: {
+  appInstanceId: string;
+  field: FieldDef;
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
   const base =
     "tap w-full rounded-DEFAULT bg-surface-container-low px-3.5 py-2.5 outline-none border border-transparent transition-all font-body-md text-body-md text-on-surface focus:border-primary focus:shadow-[0_0_0_3px_rgba(37,99,235,0.15)]";
 
-  // Receipt/photo upload isn't wired into the MVP form (see ARCHITECTURE.md
-  // limitations); skip rendering a misleading text input for it.
-  if (field.type === "image" || field.type === "location" || field.type === "rating" || field.type === "status") {
+  if (field.type === "image") {
+    return <ImageUploadInput appInstanceId={appInstanceId} label={field.label} value={(value as string) ?? ""} onChange={onChange} />;
+  }
+
+  // Location/rating/status pickers aren't wired into the MVP form yet (see
+  // ARCHITECTURE.md limitations); skip rendering a misleading text input.
+  if (field.type === "location" || field.type === "rating" || field.type === "status") {
     return null;
   }
 
@@ -125,6 +141,78 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
         onChange={(e) => onChange(field.type === "number" || field.type === "money" ? Number(e.target.value) : e.target.value)}
       />
     </label>
+  );
+}
+
+function ImageUploadInput({
+  appInstanceId,
+  label,
+  value,
+  onChange,
+}: {
+  appInstanceId: string;
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleFile(file: File | undefined) {
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch(`/api/apps/${appInstanceId}/upload`, { method: "POST", body: form });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error ?? "Upload failed");
+      onChange(body.url as string);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+      {label}
+      {value ? (
+        <div className="relative overflow-hidden rounded-DEFAULT bg-surface-container-low">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={value} alt={label} className="h-40 w-full object-cover" />
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            aria-label="Remove photo"
+            className="tap absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white"
+          >
+            <Icon name="close" size={16} />
+          </button>
+        </div>
+      ) : (
+        <label className="tap flex cursor-pointer items-center justify-center gap-2 rounded-DEFAULT border border-dashed border-on-surface/20 bg-surface-container-low py-6 font-label-md text-label-md font-medium text-on-surface-variant">
+          {uploading ? (
+            "Uploading…"
+          ) : (
+            <>
+              <Icon name="add_a_photo" size={20} />
+              <span>Add a photo</span>
+            </>
+          )}
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            disabled={uploading}
+            className="hidden"
+            onChange={(e) => handleFile(e.target.files?.[0])}
+          />
+        </label>
+      )}
+      {error ? <span className="font-body-sm text-body-sm text-error">{error}</span> : null}
+    </div>
   );
 }
 

@@ -9,7 +9,7 @@ import { BottomSheet } from "@/components/BottomSheet";
 // Simplified calendar: groups records by date and lists them chronologically
 // rather than a full month grid — sufficient for the MVP's event/reservation
 // volumes and still mobile-first (a scrolling agenda, not a cramped grid).
-export function CalendarView({ screen, records, allRecords, fields, actions, role, onMutate }: ScreenComponentProps) {
+export function CalendarView({ appInstanceId, screen, records, allRecords, fields, actions, role, onMutate }: ScreenComponentProps) {
   const [adding, setAdding] = useState(false);
   const canAdd = canDo(actions, "add", role) || canDo(actions, "reserve", role);
   const dateField = fields.find((f) => f.type === "date")?.key ?? "date";
@@ -50,6 +50,7 @@ export function CalendarView({ screen, records, allRecords, fields, actions, rol
       {adding ? (
         <BottomSheet title={`Add ${screen.title.replace(/s$/, "")}`} onClose={() => setAdding(false)}>
           <RecordForm
+            appInstanceId={appInstanceId}
             fields={fields}
             submitLabel="Add"
             onCancel={() => setAdding(false)}

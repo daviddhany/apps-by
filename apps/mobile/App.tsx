@@ -1,10 +1,12 @@
 import "./global.css";
+import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "./src/api/AuthContext";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 import { ThemeProvider, useTheme } from "./src/theme/ThemeContext";
+import { hydrateServerUrlOverride } from "./src/api/serverUrlStore";
 
 function ThemedStatusBar() {
   const { theme } = useTheme();
@@ -15,6 +17,17 @@ function ThemedStatusBar() {
 }
 
 export default function App() {
+  // A manually-set server address lives in SecureStore, which is async —
+  // every API call needs it available synchronously (getApiBaseUrl in
+  // src/api/config.ts), so it's loaded once into memory before anything
+  // that could make a network request mounts.
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    hydrateServerUrlOverride().finally(() => setReady(true));
+  }, []);
+
+  if (!ready) return null;
+
   return (
     <SafeAreaProvider>
       <ThemeProvider>

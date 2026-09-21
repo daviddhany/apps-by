@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
 import { useAuth } from "../api/AuthContext";
 import { useThemeColors } from "../theme/ThemeContext";
+import { ServerAddressSheet } from "../components/ServerAddressSheet";
 
 export function RegisterScreen({ navigation }: { navigation: { navigate: (screen: string) => void } }) {
   const { register } = useAuth();
@@ -11,6 +12,7 @@ export function RegisterScreen({ navigation }: { navigation: { navigate: (screen
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [serverSheetOpen, setServerSheetOpen] = useState(false);
 
   async function submit() {
     setLoading(true);
@@ -73,7 +75,13 @@ export function RegisterScreen({ navigation }: { navigation: { navigate: (screen
             <Text className="text-sm font-semibold text-primary">Sign in</Text>
           </Pressable>
         </View>
+
+        <Pressable onPress={() => setServerSheetOpen(true)} className="items-center">
+          <Text className="text-xs font-medium text-on-surface-variant underline">Can&rsquo;t connect? Set server address</Text>
+        </Pressable>
       </View>
+
+      <ServerAddressSheet visible={serverSheetOpen} onClose={() => setServerSheetOpen(false)} />
     </KeyboardAvoidingView>
   );
 }

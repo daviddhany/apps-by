@@ -1,4 +1,5 @@
 import Constants from "expo-constants";
+import { getServerUrlOverride } from "./serverUrlStore";
 
 const API_PORT = 3000;
 
@@ -20,13 +21,20 @@ function lanHostFromExpo(): string | undefined {
 
 /**
  * Resolves the backend base URL, in priority order:
- * 1. EXPO_PUBLIC_API_BASE_URL (Expo inlines EXPO_PUBLIC_* vars at build time)
- * 2. `extra.apiBaseUrl` in app.json, when it's been edited to something other
+ * 1. A server address typed into the app itself (Profile > Server address,
+ *    or the prompt shown on a connection failure) — the escape hatch for
+ *    any setup the heuristics below guess wrong: a tunnel, an Android
+ *    emulator (needs 10.0.2.2), a VPN, a firewalled LAN, etc.
+ * 2. EXPO_PUBLIC_API_BASE_URL (Expo inlines EXPO_PUBLIC_* vars at build time)
+ * 3. `extra.apiBaseUrl` in app.json, when it's been edited to something other
  *    than the localhost default
- * 3. Metro's own LAN host, auto-detected from Expo Go's dev manifest
- * 4. localhost, for web preview / same-machine simulators
+ * 4. Metro's own LAN host, auto-detected from Expo Go's dev manifest
+ * 5. localhost, for web preview / same-machine simulators
  */
 export function getApiBaseUrl(): string {
+  const override = getServerUrlOverride();
+  if (override) return override;
+
   const fromEnv = process.env.EXPO_PUBLIC_API_BASE_URL;
   if (fromEnv) return fromEnv;
 

@@ -74,6 +74,11 @@ export function FriendsClient({
     }
   }
 
+  function confirmRemove(f: FriendEntry) {
+    if (!window.confirm(`Remove ${f.name} from your friends?`)) return;
+    void remove(f.id);
+  }
+
   return (
     <div className="flex flex-col gap-space-lg">
       <form onSubmit={sendRequest} className="card flex flex-col gap-2 p-4">
@@ -173,7 +178,7 @@ export function FriendsClient({
               </span>
               <button
                 disabled={busyId === f.id}
-                onClick={() => remove(f.id)}
+                onClick={() => confirmRemove(f)}
                 aria-label={`Remove ${f.name}`}
                 className="tap flex h-9 w-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high disabled:opacity-50"
               >

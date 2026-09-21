@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { View, Text, TextInput, Pressable, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, Pressable, FlatList, ActivityIndicator, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { apiFetch } from "../api/client";
 import { AppHeader } from "../components/AppHeader";
@@ -79,6 +79,13 @@ export function FriendsScreen() {
     }
   }
 
+  function confirmRemove(f: FriendEntry) {
+    Alert.alert(`Remove ${f.name}?`, "You can send them a new friend request later.", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Remove", style: "destructive", onPress: () => remove(f.id) },
+    ]);
+  }
+
   const sections: { title: string; data: FriendEntry[]; kind: "incoming" | "outgoing" | "friend" }[] = [
     ...(incoming.length ? [{ title: `Requests (${incoming.length})`, data: incoming, kind: "incoming" as const }] : []),
     ...(outgoing.length ? [{ title: "Sent", data: outgoing, kind: "outgoing" as const }] : []),
@@ -141,7 +148,10 @@ export function FriendsScreen() {
                       </Pressable>
                     </View>
                   ) : (
-                    <Pressable disabled={busyId === f.id} onPress={() => remove(f.id)}>
+                    <Pressable
+                      disabled={busyId === f.id}
+                      onPress={() => (section.kind === "outgoing" ? remove(f.id) : confirmRemove(f))}
+                    >
                       <Text className="text-sm font-medium text-on-surface-variant underline">{section.kind === "outgoing" ? "Cancel" : "Remove"}</Text>
                     </Pressable>
                   )}

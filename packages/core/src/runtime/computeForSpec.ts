@@ -34,6 +34,11 @@ export function computeForSpec(spec: MiniAppSpecification, records: AppDataRecor
         out[c.key] = tallyVotes(votes);
         break;
       }
+      case "meeting.tally": {
+        const availability = byType(records, "meeting.availability").map((r) => r.data as { optionId: string });
+        out[c.key] = tallyVotes(availability);
+        break;
+      }
       case "habit.streaks": {
         const checkins = byType(records, "habit.checkin");
         const byParticipant = new Map<string, string[]>();

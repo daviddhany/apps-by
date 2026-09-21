@@ -167,6 +167,34 @@ async function runExecutor(appInstanceId: string, actorId: string, schemaKey: st
       const merged = { ...JSON.parse(poll.data), status: "closed" };
       return db.appData.update({ where: { id: payload.pollId }, data: { data: JSON.stringify(merged) } });
     }
+    case "meeting.vote": {
+      let raw = mutation.payload as { meetingId: string; optionId: string; optionLabel?: string };
+      let meetingId = raw.meetingId;
+      if (meetingId === "__open_meeting__") {
+        const openMeeting = (await db.appData.findMany({ where: { appInstanceId, entityType: "meeting.meeting" } })).find(
+          (m) => JSON.parse(m.data).status !== "scheduled"
+        );
+        if (!openMeeting) throw new ActionError("No open meeting to mark availability for", 404);
+        meetingId = openMeeting.id;
+      }
+      let optionId = raw.optionId;
+      if (optionId === "__resolve_by_label__" && raw.optionLabel) {
+        const meeting = await db.appData.findFirstOrThrow({ where: { id: meetingId, appInstanceId } });
+        const options: string[] = JSON.parse(meeting.data).options ?? [];
+        const found = options.find((o) => o.toLowerCase().includes(raw.optionLabel!.toLowerCase()));
+        if (!found) throw new ActionError(`No proposed time matching "${raw.optionLabel}"`, 404);
+        optionId = found;
+      }
+      const payload = ActionPayloadSchemas["meeting.vote"].parse({ meetingId, optionId });
+      return db.appData.create({ data: { appInstanceId, entityType: "meeting.availability", data: JSON.stringify({ ...payload, memberId: actorId }), createdById: actorId } });
+    }
+    case "meeting.close": {
+      const raw = mutation.payload as { meetingId: string };
+      const payload = ActionPayloadSchemas["meeting.close"].parse(raw);
+      const meeting = await db.appData.findFirstOrThrow({ where: { id: payload.meetingId, appInstanceId } });
+      const merged = { ...JSON.parse(meeting.data), status: "scheduled" };
+      return db.appData.update({ where: { id: payload.meetingId }, data: { data: JSON.stringify(merged) } });
+    }
     case "savings.contribute": {
       const raw = mutation.payload as { participantId: string; amount: number };
       const participantId = await resolvePersonRef(appInstanceId, "savings.participant", raw.participantId);

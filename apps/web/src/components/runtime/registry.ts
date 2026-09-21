@@ -10,6 +10,7 @@ import { LeaderboardView } from "./screens/LeaderboardView";
 import { VotingView } from "./screens/VotingView";
 import { ProgressView } from "./screens/ProgressView";
 import { CalendarView } from "./screens/CalendarView";
+import { MeetingSchedulerView } from "./screens/MeetingSchedulerView";
 
 /**
  * Fixed registry the spec's `screens[].component` must resolve through — a
@@ -35,4 +36,5 @@ export const COMPONENT_REGISTRY: Record<ComponentKey, ComponentType<ScreenCompon
   gallery: GenericRecordsView,
   dashboard: DashboardView,
   member_list: MemberListView,
+  meeting_scheduler: MeetingSchedulerView,
 };

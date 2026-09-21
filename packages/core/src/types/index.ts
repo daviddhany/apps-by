@@ -48,7 +48,8 @@ export type ComponentKey =
   | "bracket"
   | "gallery"
   | "dashboard"
-  | "member_list";
+  | "member_list"
+  | "meeting_scheduler";
 
 export interface ScreenDef {
   id: string;

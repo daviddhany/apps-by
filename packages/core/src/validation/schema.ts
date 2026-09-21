@@ -43,6 +43,7 @@ export const ComponentKeySchema = z.enum([
   "gallery",
   "dashboard",
   "member_list",
+  "meeting_scheduler",
 ]);
 
 export const ScreenDefSchema = z.object({
@@ -181,6 +182,8 @@ export const ActionPayloadSchemas = {
   "checklist.complete": z.object({ itemId: z.string(), done: z.boolean() }),
   "voting.vote": z.object({ pollId: z.string(), optionId: z.string() }),
   "voting.close": z.object({ pollId: z.string() }),
+  "meeting.vote": z.object({ meetingId: z.string(), optionId: z.string() }),
+  "meeting.close": z.object({ meetingId: z.string() }),
   "savings.contribute": z.object({ participantId: z.string(), amount: z.number().positive() }),
   "habit.checkin": z.object({ participantId: z.string(), date: z.string(), done: z.boolean() }),
   "reservation.reserve": z.object({ resourceId: z.string(), participantId: z.string(), start: z.string(), end: z.string() }),

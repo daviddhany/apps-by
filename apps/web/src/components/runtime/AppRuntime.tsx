@@ -22,6 +22,14 @@ interface AppData {
   joinCodes: { code: string; role: string }[];
 }
 
+// Every entity name is namespaced "<toolDnaNamespace>.<entity>" (buildSpec.ts).
+// An action belongs to the active screen if it shares that namespace — not
+// necessarily the exact same entity, since e.g. Voting Board's "vote" action
+// (voting.vote) operates on a different entity than its screen (voting.poll).
+function namespaceOf(entity: string | undefined): string | undefined {
+  return entity?.split(".")[0];
+}
+
 const ICONS: Record<string, string> = {
   sparkles: "✨",
   trophy: "🏆",
@@ -244,7 +252,7 @@ export function AppRuntime({ appInstanceId, currentUserId }: { appInstanceId: st
             records={records}
             allRecords={app.data}
             fields={app.spec.fields[activeScreen.entity ?? ""] ?? []}
-            actions={app.spec.actions.filter((a) => !a.entity || a.entity === activeScreen.entity)}
+            actions={app.spec.actions.filter((a) => !a.entity || namespaceOf(a.entity) === namespaceOf(activeScreen.entity))}
             computed={app.computed}
             role={app.role}
             members={app.members}

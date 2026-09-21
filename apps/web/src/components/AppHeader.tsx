@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Icon } from "./Icon";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface Props {
   title: string;
@@ -40,6 +41,7 @@ export function AppHeader({ title, subtitle, showBack, initial = "N" }: Props) {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-space-xs">
+          <ThemeToggle />
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-fixed font-label-md text-label-md font-bold text-on-primary-fixed">
             {initial.slice(0, 1).toUpperCase()}
           </span>

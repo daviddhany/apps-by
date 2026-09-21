@@ -32,12 +32,28 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { appInstanceId, role } = await redeemJoinCode(parsed.data.code);
+    const { appInstanceId, role, visibility } = await redeemJoinCode(parsed.data.code);
     const existing = await db.appMember.findUnique({ where: { appInstanceId_userId: { appInstanceId, userId: user.id } } });
-    if (!existing) {
-      await db.appMember.create({ data: { appInstanceId, userId: user.id, role } });
-      publish(appInstanceId, { type: "member.joined", payload: { userId: user.id, name: user.name }, at: new Date().toISOString() });
+    if (existing) {
+      return NextResponse.json({ appInstanceId, token: newGuestToken });
     }
+
+    if (visibility === "private") {
+      const existingRequest = await db.joinRequest.findUnique({ where: { appInstanceId_userId: { appInstanceId, userId: user.id } } });
+      if (!existingRequest) {
+        await db.joinRequest.create({ data: { appInstanceId, userId: user.id, role } });
+        const owners = await db.appMember.findMany({ where: { appInstanceId, role: { in: ["owner", "admin"] } } });
+        await db.notification.createMany({
+          data: owners.map((m) => ({ userId: m.userId, type: "join_request", payload: JSON.stringify({ appInstanceId, requesterName: user.name }) })),
+        });
+      } else if (existingRequest.status === "rejected") {
+        await db.joinRequest.update({ where: { id: existingRequest.id }, data: { status: "pending", respondedAt: null, respondedById: null } });
+      }
+      return NextResponse.json({ pending: true, token: newGuestToken });
+    }
+
+    await db.appMember.create({ data: { appInstanceId, userId: user.id, role } });
+    publish(appInstanceId, { type: "member.joined", payload: { userId: user.id, name: user.name }, at: new Date().toISOString() });
     return NextResponse.json({ appInstanceId, token: newGuestToken });
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : "Couldn't join" }, { status: 400 });

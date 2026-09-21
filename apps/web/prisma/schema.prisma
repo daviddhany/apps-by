@@ -27,6 +27,7 @@ model User {
   auditLogs     AuditLog[]
   notifications Notification[]
   invitations   Invitation[]    @relation("InvitationInviter")
+  joinRequests  JoinRequest[]
 }
 
 model ToolDNA {
@@ -107,6 +108,7 @@ model AppInstance {
   template         Template? @relation(fields: [templateId], references: [id])
   specJson         String // latest resolved MiniAppSpecification (mirrors latest MiniAppSpecification row)
   status           String   @default("active") // active | archived
+  visibility       String   @default("public") // public | private — private requires owner/admin approval to join (JoinRequest)
   creatorId        String
   creator          User     @relation("AppCreator", fields: [creatorId], references: [id])
   createdAt        DateTime @default(now())
@@ -118,6 +120,7 @@ model AppInstance {
   specVersions  MiniAppSpecification[]
   invitations   Invitation[]
   aiMutations   AIMutation[]
+  joinRequests  JoinRequest[]
 }
 
 model MiniAppSpecification {
@@ -167,6 +170,21 @@ model JoinCode {
   useCount      Int         @default(0)
   expiresAt     DateTime?
   createdAt     DateTime    @default(now())
+}
+
+model JoinRequest {
+  id            String      @id @default(cuid())
+  appInstanceId String
+  appInstance   AppInstance @relation(fields: [appInstanceId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  role          String      @default("participant")
+  status        String      @default("pending") // pending | approved | rejected
+  createdAt     DateTime    @default(now())
+  respondedAt   DateTime?
+  respondedById String?
+
+  @@unique([appInstanceId, userId])
 }
 
 model Invitation {

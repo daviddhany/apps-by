@@ -13,17 +13,22 @@ export function JoinScreen() {
   const [needsName, setNeedsName] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pending, setPending] = useState(false);
 
   async function submit() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiFetch<{ appInstanceId: string }>("/api/join", {
+      const result = await apiFetch<{ appInstanceId?: string; pending?: boolean }>("/api/join", {
         method: "POST",
         body: JSON.stringify({ code, guestName: needsName ? guestName : undefined }),
       });
+      if (result.pending) {
+        setPending(true);
+        return;
+      }
       await refresh();
-      navigation.replace("AppRuntime", { appInstanceId: result.appInstanceId });
+      navigation.replace("AppRuntime", { appInstanceId: result.appInstanceId! });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Couldn't join";
       if (message === "needs_name") {
@@ -35,6 +40,24 @@ export function JoinScreen() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (pending) {
+    return (
+      <View className="flex-1 bg-surface">
+        <AppHeader title="Join an app" showBack initial={user?.name ?? "N"} />
+        <View className="flex-1 items-center justify-center gap-3 px-8">
+          <Text className="text-4xl">⏳</Text>
+          <Text className="text-xl font-bold text-on-surface">Request sent</Text>
+          <Text className="text-center text-sm text-on-surface-variant">
+            This app is private. Its owner needs to approve your request before you can open it — you&rsquo;ll be notified once they do.
+          </Text>
+          <Pressable onPress={() => navigation.goBack()} className="mt-2 rounded-full bg-surface-container px-5 py-2.5">
+            <Text className="text-sm font-semibold text-on-surface">Back</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
   }
 
   return (

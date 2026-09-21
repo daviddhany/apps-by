@@ -12,16 +12,21 @@ export default function JoinPage() {
   const [needsName, setNeedsName] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pending, setPending] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      const result = await apiFetch<{ appInstanceId: string }>("/api/join", {
+      const result = await apiFetch<{ appInstanceId?: string; pending?: boolean }>("/api/join", {
         method: "POST",
         body: JSON.stringify({ code, guestName: needsName ? guestName : undefined }),
       });
+      if (result.pending) {
+        setPending(true);
+        return;
+      }
       router.push(`/apps/${result.appInstanceId}`);
       router.refresh();
     } catch (err) {
@@ -35,6 +40,21 @@ export default function JoinPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (pending) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-space-md px-6 text-center">
+        <span className="text-4xl">⏳</span>
+        <h1 className="font-headline-lg text-headline-lg font-bold text-on-surface">Request sent</h1>
+        <p className="font-body-md text-body-md text-on-surface-variant">
+          This app is private. Its owner needs to approve your request before you can open it — you&rsquo;ll be notified once they do.
+        </p>
+        <button onClick={() => router.push("/")} className="tap mt-2 rounded-full bg-surface-container px-5 py-2.5 font-label-md text-label-md font-semibold text-on-surface">
+          Back to home
+        </button>
+      </main>
+    );
   }
 
   return (

@@ -9,10 +9,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { spec, membership, appInstance } = await loadAppForMember(id, undefined, req);
 
-    const [records, members, joinCodes] = await Promise.all([
+    const isOwnerOrAdmin = membership.role === "owner" || membership.role === "admin";
+    const [records, members, joinCodes, pendingRequestCount] = await Promise.all([
       db.appData.findMany({ where: { appInstanceId: id } }),
       db.appMember.findMany({ where: { appInstanceId: id }, include: { user: true } }),
       db.joinCode.findMany({ where: { appInstanceId: id } }),
+      isOwnerOrAdmin ? db.joinRequest.count({ where: { appInstanceId: id, status: "pending" } }) : 0,
     ]);
 
     const parsedRecords = records.map((r) => ({ id: r.id, entityType: r.entityType, data: JSON.parse(r.data) }));
@@ -22,11 +24,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       appInstanceId: id,
       spec,
       status: appInstance.status,
+      visibility: appInstance.visibility,
       role: membership.role,
       data: parsedRecords,
       computed,
       members: members.map((m) => ({ id: m.userId, name: m.user.name, role: m.role, isGuest: m.user.isGuest })),
       joinCodes: joinCodes.map((j) => ({ code: j.code, role: j.role })),
+      pendingRequestCount,
     });
   } catch (err) {
     const status = (err as { status?: number }).status ?? 500;
@@ -34,18 +38,23 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-const PatchSchema = z.object({ status: z.enum(["active", "archived"]) });
+const PatchSchema = z.object({
+  status: z.enum(["active", "archived"]).optional(),
+  visibility: z.enum(["public", "private"]).optional(),
+});
 
-/** Archive/unarchive — reversible, owner or admin only. */
+/** Archive/unarchive and/or toggle public/private — reversible, owner or admin only. */
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     await loadAppForMember(id, ["owner", "admin"], req);
     const parsed = PatchSchema.safeParse(await req.json().catch(() => null));
-    if (!parsed.success) return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    if (!parsed.success || (!parsed.data.status && !parsed.data.visibility)) {
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    }
 
-    await db.appInstance.update({ where: { id }, data: { status: parsed.data.status } });
-    return NextResponse.json({ status: parsed.data.status });
+    const updated = await db.appInstance.update({ where: { id }, data: parsed.data });
+    return NextResponse.json({ status: updated.status, visibility: updated.visibility });
   } catch (err) {
     const status = (err as { status?: number }).status ?? 500;
     return NextResponse.json({ error: err instanceof Error ? err.message : "Failed" }, { status });

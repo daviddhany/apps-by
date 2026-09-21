@@ -15,11 +15,13 @@ interface AppData {
   appInstanceId: string;
   spec: MiniAppSpecification;
   status: string;
+  visibility: string;
   role: string;
   data: RuntimeRecord[];
   computed: Record<string, unknown>;
   members: RuntimeMember[];
   joinCodes: { code: string; role: string }[];
+  pendingRequestCount: number;
 }
 
 // Every entity name is namespaced "<toolDnaNamespace>.<entity>" (buildSpec.ts).
@@ -182,10 +184,15 @@ export function AppRuntime({ appInstanceId, currentUserId }: { appInstanceId: st
               {app.joinCodes[0] ? (
                 <button
                   onClick={() => setShowShare(true)}
-                  className="tap flex h-9 items-center gap-1.5 rounded-full bg-surface-container px-3 font-label-md text-label-md text-on-surface shadow-sm transition-all hover:bg-surface-container-high active:scale-95"
+                  className="tap relative flex h-9 items-center gap-1.5 rounded-full bg-surface-container px-3 font-label-md text-label-md text-on-surface shadow-sm transition-all hover:bg-surface-container-high active:scale-95"
                 >
                   <Icon name="qr_code_2" size={18} className="text-primary" />
                   <span>{app.joinCodes[0].code}</span>
+                  {app.pendingRequestCount > 0 ? (
+                    <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-tertiary px-1 font-label-sm text-label-sm font-bold text-on-tertiary">
+                      {app.pendingRequestCount}
+                    </span>
+                  ) : null}
                 </button>
               ) : (
                 <button
@@ -313,7 +320,14 @@ export function AppRuntime({ appInstanceId, currentUserId }: { appInstanceId: st
 
       {showShare ? (
         <BottomSheet title="Share this app" onClose={() => setShowShare(false)}>
-          <ShareSheet appInstanceId={appInstanceId} title={app.spec.title} joinCodes={app.joinCodes} onRefresh={load} />
+          <ShareSheet
+            appInstanceId={appInstanceId}
+            title={app.spec.title}
+            joinCodes={app.joinCodes}
+            visibility={app.visibility}
+            canManage={app.role === "owner" || app.role === "admin"}
+            onRefresh={load}
+          />
         </BottomSheet>
       ) : null}
 
@@ -337,38 +351,81 @@ function ShareSheet({
   appInstanceId,
   title,
   joinCodes,
+  visibility,
+  canManage,
   onRefresh,
 }: {
   appInstanceId: string;
   title: string;
   joinCodes: { code: string; role: string }[];
+  visibility: string;
+  canManage: boolean;
   onRefresh: () => void;
 }) {
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [settingVisibility, setSettingVisibility] = useState(false);
   const code = joinCodes[0]?.code;
   const link = typeof window !== "undefined" && code ? `${window.location.origin}/join?code=${code}` : "";
   const qrSrc = link ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(link)}` : "";
 
+  async function setVisibility(next: "public" | "private") {
+    setSettingVisibility(true);
+    try {
+      await apiFetch(`/api/apps/${appInstanceId}`, { method: "PATCH", body: JSON.stringify({ visibility: next }) });
+      onRefresh();
+    } finally {
+      setSettingVisibility(false);
+    }
+  }
+
+  const visibilityToggle = canManage ? (
+    <div className="flex items-center justify-between rounded-DEFAULT bg-surface-container-low p-space-sm">
+      <div className="flex items-center gap-2">
+        <Icon name={visibility === "private" ? "lock" : "public"} size={18} className="text-on-surface-variant" />
+        <div>
+          <p className="font-label-md text-label-md font-semibold text-on-surface">{visibility === "private" ? "Private" : "Public"}</p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">
+            {visibility === "private" ? "New joiners need your approval" : "Anyone with the code joins instantly"}
+          </p>
+        </div>
+      </div>
+      <button
+        disabled={settingVisibility}
+        onClick={() => setVisibility(visibility === "private" ? "public" : "private")}
+        className={`tap rounded-full px-3 py-1.5 font-label-sm text-label-sm font-semibold transition-colors disabled:opacity-50 ${
+          visibility === "private" ? "bg-primary text-on-primary" : "bg-surface-container-high text-on-surface"
+        }`}
+      >
+        Make {visibility === "private" ? "public" : "private"}
+      </button>
+    </div>
+  ) : null;
+
   if (!code) {
     return (
-      <button
-        disabled={creating}
-        onClick={async () => {
-          setCreating(true);
-          await apiFetch(`/api/apps/${appInstanceId}/join-code`, { method: "POST" });
-          setCreating(false);
-          onRefresh();
-        }}
-        className="tap rounded-full bg-primary py-3 font-label-lg text-label-lg text-on-primary"
-      >
-        {creating ? "Creating…" : "Create a join code"}
-      </button>
+      <div className="flex flex-col gap-space-md">
+        {visibilityToggle}
+        <button
+          disabled={creating}
+          onClick={async () => {
+            setCreating(true);
+            await apiFetch(`/api/apps/${appInstanceId}/join-code`, { method: "POST" });
+            setCreating(false);
+            onRefresh();
+          }}
+          className="tap rounded-full bg-primary py-3 font-label-lg text-label-lg text-on-primary"
+        >
+          {creating ? "Creating…" : "Create a join code"}
+        </button>
+      </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-space-md">
+      {visibilityToggle}
+      {canManage && visibility === "private" ? <JoinRequestsPanel appInstanceId={appInstanceId} onRefresh={onRefresh} /> : null}
       <p className="font-body-sm text-body-sm text-on-surface-variant">Give friends instant access to {title} — no account required to join.</p>
 
       <div className="relative my-1 flex flex-col items-center justify-center rounded-DEFAULT bg-surface-container-low p-space-md shadow-inner">
@@ -485,6 +542,68 @@ function CommandSheet({ appInstanceId, screens, onDone }: { appInstanceId: strin
         {busy ? "Working…" : "Do it"}
       </button>
     </form>
+  );
+}
+
+interface JoinRequestItem {
+  id: string;
+  name: string;
+  role: string;
+  createdAt: string;
+}
+
+function JoinRequestsPanel({ appInstanceId, onRefresh }: { appInstanceId: string; onRefresh: () => void }) {
+  const [requests, setRequests] = useState<JoinRequestItem[] | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  useEffect(() => {
+    apiFetch<{ requests: JoinRequestItem[] }>(`/api/apps/${appInstanceId}/join-requests`)
+      .then((r) => setRequests(r.requests))
+      .catch(() => setRequests([]));
+  }, [appInstanceId]);
+
+  async function respond(id: string, action: "approve" | "reject") {
+    setBusyId(id);
+    try {
+      await apiFetch(`/api/apps/${appInstanceId}/join-requests/${id}`, { method: "POST", body: JSON.stringify({ action }) });
+      setRequests((prev) => prev?.filter((r) => r.id !== id) ?? null);
+      onRefresh();
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  if (!requests || requests.length === 0) return null;
+
+  return (
+    <div className="flex flex-col gap-2 rounded-DEFAULT bg-surface-container-low p-space-sm">
+      <p className="font-label-sm text-label-sm font-semibold uppercase tracking-widest text-on-surface-variant">
+        {requests.length} waiting for approval
+      </p>
+      {requests.map((r) => (
+        <div key={r.id} className="flex items-center justify-between gap-2 rounded-xl bg-surface-container-lowest px-3 py-2">
+          <span className="font-body-sm text-body-sm font-medium text-on-surface">{r.name}</span>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button
+              disabled={busyId === r.id}
+              onClick={() => respond(r.id, "reject")}
+              className="tap flex h-8 w-8 items-center justify-center rounded-full bg-error-container text-on-error-container disabled:opacity-50"
+              aria-label={`Reject ${r.name}`}
+            >
+              <Icon name="close" size={16} />
+            </button>
+            <button
+              disabled={busyId === r.id}
+              onClick={() => respond(r.id, "approve")}
+              className="tap flex h-8 w-8 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container disabled:opacity-50"
+              aria-label={`Approve ${r.name}`}
+            >
+              <Icon name="check" size={16} />
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 

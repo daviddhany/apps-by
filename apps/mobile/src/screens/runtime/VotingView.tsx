@@ -5,8 +5,10 @@ import { canDo } from "@needly/core";
 import { RecordForm } from "./RecordForm";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Icon } from "../../components/Icon";
+import { useThemeColors } from "../../theme/ThemeContext";
 
 export function VotingView({ appInstanceId, screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
+  const colors = useThemeColors();
   const [adding, setAdding] = useState(false);
   const canCreate = canDo(actions, "add", role);
   const canVote = canDo(actions, "vote", role);
@@ -71,7 +73,7 @@ export function VotingView({ appInstanceId, screen, records, allRecords, fields,
 
       {canCreate ? (
         <Pressable onPress={() => setAdding(true)} className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg">
-          <Icon name="add" size={26} color="#1000a9" />
+          <Icon name="add" size={26} color={colors["on-primary"]} />
         </Pressable>
       ) : null}
 

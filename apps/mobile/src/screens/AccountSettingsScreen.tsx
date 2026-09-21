@@ -3,9 +3,11 @@ import { View, Text, TextInput, Pressable, ActivityIndicator } from "react-nativ
 import { apiFetch } from "../api/client";
 import { AppHeader } from "../components/AppHeader";
 import { useAuth } from "../api/AuthContext";
+import { useThemeColors } from "../theme/ThemeContext";
 
 export function AccountSettingsScreen() {
   const { user } = useAuth();
+  const colors = useThemeColors();
   const isGuest = !user?.email;
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -61,7 +63,7 @@ export function AccountSettingsScreen() {
             <TextInput
               secureTextEntry
               placeholder="Current password"
-              placeholderTextColor="#908fa0"
+              placeholderTextColor={colors.outline}
               value={currentPassword}
               onChangeText={setCurrentPassword}
               className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
@@ -69,7 +71,7 @@ export function AccountSettingsScreen() {
             <TextInput
               secureTextEntry
               placeholder="New password (min 8 characters)"
-              placeholderTextColor="#908fa0"
+              placeholderTextColor={colors.outline}
               value={newPassword}
               onChangeText={setNewPassword}
               className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
@@ -77,7 +79,7 @@ export function AccountSettingsScreen() {
             <TextInput
               secureTextEntry
               placeholder="Confirm new password"
-              placeholderTextColor="#908fa0"
+              placeholderTextColor={colors.outline}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
@@ -85,7 +87,7 @@ export function AccountSettingsScreen() {
             {error ? <Text className="text-sm text-error">{error}</Text> : null}
             {success ? <Text className="text-sm text-secondary">Password updated.</Text> : null}
             <Pressable onPress={submit} disabled={loading} className="items-center rounded-full bg-primary py-3 disabled:opacity-50">
-              {loading ? <ActivityIndicator color="#1000a9" /> : <Text className="font-semibold text-on-primary">Update password</Text>}
+              {loading ? <ActivityIndicator color={colors["on-primary"]} /> : <Text className="font-semibold text-on-primary">Update password</Text>}
             </Pressable>
           </View>
         )}

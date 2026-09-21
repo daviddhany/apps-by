@@ -6,6 +6,7 @@ import { AppHeader } from "../components/AppHeader";
 import { BottomSheet } from "../components/BottomSheet";
 import { Icon } from "../components/Icon";
 import { useAuth } from "../api/AuthContext";
+import { useThemeColors } from "../theme/ThemeContext";
 
 interface AppSummary {
   id: string;
@@ -25,6 +26,7 @@ const FILTERS: { key: Filter; label: string }[] = [
 export function MyAppsScreen() {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
+  const colors = useThemeColors();
   const [apps, setApps] = useState<AppSummary[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
   const [menuApp, setMenuApp] = useState<AppSummary | null>(null);
@@ -94,7 +96,7 @@ export function MyAppsScreen() {
         <View className="mb-4 flex-row items-center justify-between">
           <Text className="text-2xl font-bold text-on-surface">My Apps</Text>
           <Pressable onPress={() => navigation.navigate("Join")} className="flex-row items-center gap-1 rounded-full bg-primary-fixed px-3 py-1.5">
-            <Icon name="qr_code_scanner" size={16} color="#07006c" />
+            <Icon name="qr_code_scanner" size={16} color={colors["on-primary-fixed"]} />
             <Text className="text-sm font-medium text-on-primary-fixed">Join with code</Text>
           </Pressable>
         </View>
@@ -153,7 +155,7 @@ export function MyAppsScreen() {
                   onPress={() => setMenuApp(item)}
                   className="ml-2 h-9 w-9 items-center justify-center rounded-full active:bg-surface-container"
                 >
-                  <Icon name="more_vert" size={18} color="#c7c4d7" />
+                  <Icon name="more_vert" size={18} color={colors["on-surface-variant"]} />
                 </Pressable>
               </View>
             )}
@@ -166,12 +168,12 @@ export function MyAppsScreen() {
           <View className="gap-2">
             {menuApp.status === "archived" ? (
               <Pressable onPress={() => setArchived(menuApp, false)} className="flex-row items-center gap-3 rounded-2xl bg-surface-container-low px-4 py-3">
-                <Icon name="unarchive" size={20} color="#c0c1ff" />
+                <Icon name="unarchive" size={20} color={colors.primary} />
                 <Text className="text-base font-medium text-on-surface">Restore app</Text>
               </Pressable>
             ) : (
               <Pressable onPress={() => setArchived(menuApp, true)} className="flex-row items-center gap-3 rounded-2xl bg-surface-container-low px-4 py-3">
-                <Icon name="archive" size={20} color="#c7c4d7" />
+                <Icon name="archive" size={20} color={colors["on-surface-variant"]} />
                 <View>
                   <Text className="text-base font-medium text-on-surface">Archive app</Text>
                   <Text className="text-xs text-on-surface-variant">Hides it without losing any data. Reversible.</Text>
@@ -180,7 +182,7 @@ export function MyAppsScreen() {
             )}
             {menuApp.role === "owner" ? (
               <Pressable onPress={() => confirmDelete(menuApp)} className="flex-row items-center gap-3 rounded-2xl bg-error-container px-4 py-3">
-                <Icon name="delete_forever" size={20} color="#ffdad6" />
+                <Icon name="delete_forever" size={20} color={colors["on-error-container"]} />
                 <View>
                   <Text className="text-base font-medium text-on-error-container">Delete permanently</Text>
                   <Text className="text-xs text-on-error-container/80">Deletes all data for every member. Can&rsquo;t be undone.</Text>

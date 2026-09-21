@@ -4,10 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../api/client";
 import { useAuth } from "../api/AuthContext";
 import { AppHeader } from "../components/AppHeader";
+import { useThemeColors } from "../theme/ThemeContext";
 
 export function JoinScreen() {
   const navigation = useNavigation<any>();
   const { user, refresh } = useAuth();
+  const colors = useThemeColors();
   const [code, setCode] = useState("");
   const [guestName, setGuestName] = useState("");
   const [needsName, setNeedsName] = useState(false);
@@ -72,7 +74,7 @@ export function JoinScreen() {
         <View className="gap-3 rounded-2xl bg-surface-container-lowest p-5">
           <TextInput
             placeholder="D7K-42P"
-            placeholderTextColor="#908fa0"
+            placeholderTextColor={colors.outline}
             autoCapitalize="characters"
             value={code}
             onChangeText={(v) => setCode(v.toUpperCase())}
@@ -82,7 +84,7 @@ export function JoinScreen() {
           {needsName ? (
             <TextInput
               placeholder="Your name"
-              placeholderTextColor="#908fa0"
+              placeholderTextColor={colors.outline}
               value={guestName}
               onChangeText={setGuestName}
               className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
@@ -90,7 +92,7 @@ export function JoinScreen() {
           ) : null}
           {error ? <Text className="text-sm text-tertiary">{error}</Text> : null}
           <Pressable onPress={submit} disabled={loading || !code} className="items-center rounded-full bg-primary py-3 disabled:opacity-50">
-            {loading ? <ActivityIndicator color="#1000a9" /> : <Text className="text-base font-semibold text-on-primary">Join</Text>}
+            {loading ? <ActivityIndicator color={colors["on-primary"]} /> : <Text className="text-base font-semibold text-on-primary">Join</Text>}
           </Pressable>
         </View>
       </View>

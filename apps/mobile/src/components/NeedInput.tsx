@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 
 import { useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../api/client";
 import { Icon } from "./Icon";
+import { useThemeColors } from "../theme/ThemeContext";
 
 const SUGGESTIONS = [
   { emoji: "🏝️", label: "Split a trip", prompt: "We're 8 friends traveling together and want to split all our expenses." },
@@ -22,6 +23,7 @@ type Outcome =
 
 export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
   const navigation = useNavigation<any>();
+  const colors = useThemeColors();
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState(0);
@@ -87,7 +89,7 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
             value={text}
             onChangeText={setText}
             placeholder="e.g. We're 8 friends traveling to Dahab and want to split all our expenses..."
-            placeholderTextColor="#908fa0"
+            placeholderTextColor={colors.outline}
             multiline
             numberOfLines={3}
             className="rounded-2xl bg-surface-container-low p-4 text-base text-on-surface"
@@ -98,17 +100,17 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
             disabled={!text.trim() || improving}
             className="absolute right-2 top-2 h-8 w-8 items-center justify-center rounded-full disabled:opacity-40"
           >
-            {improving ? <ActivityIndicator size="small" color="#8083ff" /> : <Icon name="auto_awesome" size={20} color="#8083ff" />}
+            {improving ? <ActivityIndicator size="small" color={colors["primary-container"]} /> : <Icon name="auto_awesome" size={20} color={colors["primary-container"]} />}
           </Pressable>
         </View>
 
         <View className="flex-row items-center justify-between pt-1">
           <View className="flex-row items-center gap-2">
             <View className="h-9 w-9 items-center justify-center rounded-full bg-surface-container">
-              <Icon name="mic" size={18} color="#8083ff" />
+              <Icon name="mic" size={18} color={colors["primary-container"]} />
             </View>
             <View className="h-9 w-9 items-center justify-center rounded-full bg-surface-container">
-              <Icon name="attach_file" size={18} color="#c7c4d7" />
+              <Icon name="attach_file" size={18} color={colors["on-surface-variant"]} />
             </View>
           </View>
           <Pressable
@@ -117,12 +119,12 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
             className="flex-row items-center gap-1.5 rounded-full bg-primary-container px-5 py-2.5 shadow-sm active:opacity-90 disabled:opacity-40"
           >
             {loading ? (
-              <ActivityIndicator color="#1000a9" size="small" />
+              <ActivityIndicator color={colors["on-primary"]} size="small" />
             ) : (
               <>
-                <Icon name="bolt" size={18} color="#1000a9" />
+                <Icon name="bolt" size={18} color={colors["on-primary"]} />
                 <Text className="font-semibold text-on-primary">Make</Text>
-                <Icon name="arrow_forward" size={18} color="#1000a9" />
+                <Icon name="arrow_forward" size={18} color={colors["on-primary"]} />
               </>
             )}
           </Pressable>
@@ -131,7 +133,7 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
 
       {loading ? (
         <View className="mt-3 flex-row items-center justify-center gap-2">
-          <ActivityIndicator size="small" color="#c0c1ff" />
+          <ActivityIndicator size="small" color={colors.primary} />
           <Text className="text-sm text-on-surface-variant">{STAGES[stage]}</Text>
         </View>
       ) : null}

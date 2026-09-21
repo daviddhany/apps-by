@@ -1,6 +1,7 @@
 import { Modal, View, Text, Pressable, KeyboardAvoidingView, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "./Icon";
+import { useThemeColors } from "../theme/ThemeContext";
 
 export function BottomSheet({
   visible,
@@ -14,6 +15,7 @@ export function BottomSheet({
   children: React.ReactNode;
 }) {
   const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -24,7 +26,7 @@ export function BottomSheet({
             <View className="mb-4 flex-row items-center justify-between">
               <Text className="text-lg font-bold text-on-surface">{title}</Text>
               <Pressable onPress={onClose} className="h-7 w-7 items-center justify-center rounded-full bg-surface-container">
-                <Icon name="close" size={16} color="#e2e2e9" />
+                <Icon name="close" size={16} color={colors["on-surface"]} />
               </Pressable>
             </View>
             {children}

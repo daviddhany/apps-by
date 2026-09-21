@@ -5,6 +5,7 @@ import type { FieldDef } from "@needly/core";
 import { Icon } from "../../components/Icon";
 import { getApiBaseUrl } from "../../api/config";
 import { getToken } from "../../api/tokenStore";
+import { useThemeColors } from "../../theme/ThemeContext";
 
 interface Props {
   appInstanceId: string;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function RecordForm({ appInstanceId, fields, submitLabel, onSubmit, onCancel }: Props) {
+  const colors = useThemeColors();
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     const initial: Record<string, unknown> = {};
     for (const f of fields) if (f.default !== undefined) initial[f.key] = f.default;
@@ -54,7 +56,7 @@ export function RecordForm({ appInstanceId, fields, submitLabel, onSubmit, onCan
           <Text className="font-semibold text-on-surface-variant">Cancel</Text>
         </Pressable>
         <Pressable onPress={handleSubmit} disabled={busy} className="flex-1 items-center rounded-full bg-primary py-3 disabled:opacity-50">
-          {busy ? <ActivityIndicator color="#1000a9" /> : <Text className="font-semibold text-on-primary">{submitLabel}</Text>}
+          {busy ? <ActivityIndicator color={colors["on-primary"]} /> : <Text className="font-semibold text-on-primary">{submitLabel}</Text>}
         </Pressable>
       </View>
     </View>
@@ -72,6 +74,7 @@ function FieldInput({
   value: unknown;
   onChange: (v: unknown) => void;
 }) {
+  const colors = useThemeColors();
   if (field.type === "image") {
     return <ImageUploadInput appInstanceId={appInstanceId} label={field.label} value={(value as string) ?? ""} onChange={onChange} />;
   }
@@ -114,7 +117,7 @@ function FieldInput({
         <Text className="text-xs text-on-surface-variant">{field.label}</Text>
         <TextInput
           placeholder="Name"
-          placeholderTextColor="#908fa0"
+          placeholderTextColor={colors.outline}
           value={typeof value === "string" ? value : ""}
           onChangeText={onChange}
           className="rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
@@ -147,6 +150,7 @@ function ImageUploadInput({
   value: string;
   onChange: (url: string) => void;
 }) {
+  const colors = useThemeColors();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -196,6 +200,9 @@ function ImageUploadInput({
             onPress={() => onChange("")}
             className="absolute right-2 top-2 h-8 w-8 items-center justify-center rounded-full bg-black/60"
           >
+            {/* White regardless of theme — this icon sits on a fixed
+             * bg-black/60 image scrim, not a themed surface, same reasoning
+             * as ShareSheet's QR-code white background above. */}
             <Icon name="close" size={16} color="#ffffff" />
           </Pressable>
         </View>
@@ -206,10 +213,10 @@ function ImageUploadInput({
           className="flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-outline-variant/50 bg-surface-container-low py-6"
         >
           {uploading ? (
-            <ActivityIndicator color="#c0c1ff" />
+            <ActivityIndicator color={colors.primary} />
           ) : (
             <>
-              <Icon name="add" size={20} color="#c7c4d7" />
+              <Icon name="add" size={20} color={colors["on-surface-variant"]} />
               <Text className="font-medium text-on-surface-variant">Add a photo</Text>
             </>
           )}
@@ -224,6 +231,7 @@ function ImageUploadInput({
  * comma-separated text box — used for voting options, split-among names,
  * passenger lists, etc. */
 function ChipListInput({ label, value, onChange }: { label: string; value: string[]; onChange: (v: string[]) => void }) {
+  const colors = useThemeColors();
   const [draft, setDraft] = useState("");
 
   function commit() {
@@ -246,7 +254,7 @@ function ChipListInput({ label, value, onChange }: { label: string; value: strin
           onSubmitEditing={commit}
           returnKeyType="done"
           placeholder="Type a name, then tap Add"
-          placeholderTextColor="#908fa0"
+          placeholderTextColor={colors.outline}
           className="flex-1 rounded-2xl bg-surface-container-low px-4 py-3 text-base text-on-surface"
         />
         <Pressable onPress={commit} className="items-center justify-center rounded-2xl bg-surface-container-high px-4">
@@ -259,7 +267,7 @@ function ChipListInput({ label, value, onChange }: { label: string; value: strin
             <View key={item} className="flex-row items-center gap-1.5 rounded-full bg-primary-fixed py-1 pl-3 pr-1.5">
               <Text className="text-sm text-on-primary-fixed">{item}</Text>
               <Pressable onPress={() => onChange(value.filter((v) => v !== item))} className="h-4 w-4 items-center justify-center rounded-full">
-                <Icon name="close" size={12} color="#07006c" />
+                <Icon name="close" size={12} color={colors["on-primary-fixed"]} />
               </Pressable>
             </View>
           ))}

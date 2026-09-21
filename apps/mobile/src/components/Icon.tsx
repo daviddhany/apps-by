@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import { useThemeColors } from "../theme/ThemeContext";
 
 // Maps the same icon-name vocabulary the web app uses (Material Symbols
 // Outlined, snake_case) onto @expo/vector-icons' MaterialIcons set (the
@@ -40,9 +41,16 @@ const NAME_MAP: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   add_a_photo: "add-a-photo",
   visibility: "visibility",
   visibility_off: "visibility-off",
+  light_mode: "light-mode",
+  dark_mode: "dark-mode",
 };
 
-export function Icon({ name, size = 20, color = "#e2e2e9" }: { name: string; size?: number; color?: string }) {
+// No call site currently omits `color` (every usage passes one explicitly),
+// but Icon reads the live theme for its default anyway so a future one that
+// does stays correct across theme toggles, instead of freezing on a
+// hardcoded dark-theme hex.
+export function Icon({ name, size = 20, color }: { name: string; size?: number; color?: string }) {
+  const colors = useThemeColors();
   const resolved = NAME_MAP[name] ?? "help-outline";
-  return <MaterialIcons name={resolved} size={size} color={color} />;
+  return <MaterialIcons name={resolved} size={size} color={color ?? colors["on-surface"]} />;
 }

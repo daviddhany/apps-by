@@ -4,6 +4,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../api/client";
 import { AppHeader } from "../components/AppHeader";
 import { useAuth } from "../api/AuthContext";
+import { useThemeColors } from "../theme/ThemeContext";
 
 interface Template {
   id: string;
@@ -17,6 +18,7 @@ interface Template {
 export function DiscoverScreen() {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
+  const colors = useThemeColors();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [usingId, setUsingId] = useState<string | null>(null);
 
@@ -70,7 +72,7 @@ export function DiscoverScreen() {
                     {item.usageCount} uses · {item.remixCount} remixes
                   </Text>
                   <Pressable disabled={usingId === item.id} onPress={() => use(item.id)} className="rounded-full bg-primary px-3 py-1.5">
-                    {usingId === item.id ? <ActivityIndicator size="small" color="#1000a9" /> : <Text className="text-sm font-semibold text-on-primary">Use this</Text>}
+                    {usingId === item.id ? <ActivityIndicator size="small" color={colors["on-primary"]} /> : <Text className="text-sm font-semibold text-on-primary">Use this</Text>}
                   </Pressable>
                 </View>
               </View>

@@ -5,17 +5,20 @@ import { CreateScreen } from "../screens/CreateScreen";
 import { MyAppsScreen } from "../screens/MyAppsScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
 import { Icon } from "../components/Icon";
+import { useThemeColors } from "../theme/ThemeContext";
 
 const Tab = createBottomTabNavigator();
 
 export function MainTabs() {
+  const colors = useThemeColors();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#c0c1ff",
-        tabBarInactiveTintColor: "#c7c4d7",
-        tabBarStyle: { backgroundColor: "#1a1b21", borderTopColor: "rgba(255,255,255,0.08)" },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors["on-surface-variant"],
+        tabBarStyle: { backgroundColor: colors["surface-container-low"], borderTopColor: "rgba(255,255,255,0.08)" },
       }}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: ({ color, size }) => <Icon name="auto_awesome" size={size} color={color} /> }} />

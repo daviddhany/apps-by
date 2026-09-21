@@ -5,10 +5,12 @@ import { AppHeader } from "../components/AppHeader";
 import { Icon } from "../components/Icon";
 import { apiFetch } from "../api/client";
 import { useAuth } from "../api/AuthContext";
+import { useThemeColors } from "../theme/ThemeContext";
 
 export function ProfileScreen() {
   const { user, logout } = useAuth();
   const navigation = useNavigation<any>();
+  const colors = useThemeColors();
   const [friendCount, setFriendCount] = useState(0);
   const [incomingCount, setIncomingCount] = useState(0);
 
@@ -37,7 +39,7 @@ export function ProfileScreen() {
 
         <Pressable onPress={() => navigation.navigate("Friends")} className="flex-row items-center justify-between rounded-2xl bg-surface-container-lowest px-4 py-3.5">
           <View className="flex-row items-center gap-3">
-            <Icon name="group" size={20} color="#c0c1ff" />
+            <Icon name="group" size={20} color={colors.primary} />
             <View>
               <Text className="text-base font-bold text-on-surface">Friends</Text>
               <Text className="text-xs text-on-surface-variant">{friendCount} friend{friendCount === 1 ? "" : "s"}</Text>
@@ -49,16 +51,16 @@ export function ProfileScreen() {
                 <Text className="text-xs font-bold text-on-tertiary">{incomingCount}</Text>
               </View>
             ) : null}
-            <Icon name="chevron_right" size={20} color="#94A3B8" />
+            <Icon name="chevron_right" size={20} color={colors.outline} />
           </View>
         </Pressable>
 
         <Pressable onPress={() => navigation.navigate("AccountSettings")} className="flex-row items-center justify-between rounded-2xl bg-surface-container-lowest px-4 py-3.5">
           <View className="flex-row items-center gap-3">
-            <Icon name="settings" size={20} color="#c0c1ff" />
+            <Icon name="settings" size={20} color={colors.primary} />
             <Text className="text-base font-bold text-on-surface">Account settings</Text>
           </View>
-          <Icon name="chevron_right" size={20} color="#94A3B8" />
+          <Icon name="chevron_right" size={20} color={colors.outline} />
         </Pressable>
 
         <View className="rounded-2xl bg-surface-container-lowest p-5">

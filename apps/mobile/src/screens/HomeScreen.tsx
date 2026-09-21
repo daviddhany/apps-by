@@ -7,6 +7,7 @@ import { useAuth } from "../api/AuthContext";
 import { AppHeader } from "../components/AppHeader";
 import { NeedInput } from "../components/NeedInput";
 import { Icon } from "../components/Icon";
+import { useThemeColors } from "../theme/ThemeContext";
 
 const ICON_EMOJI: Record<string, string> = { sparkles: "✨", trophy: "🏆", receipt: "🧾", car: "🚗", "check-square": "✅" };
 
@@ -34,6 +35,7 @@ export function HomeScreen() {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
   const [cards, setCards] = useState<CardData[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -87,7 +89,7 @@ export function HomeScreen() {
         >
           <View className="flex-1 flex-row items-center gap-2.5">
             <View className="h-9 w-9 items-center justify-center rounded-xl bg-surface-container-lowest">
-              <Icon name="qr_code_scanner" size={20} color="#c0c1ff" />
+              <Icon name="qr_code_scanner" size={20} color={colors.primary} />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-semibold text-on-surface">Got a code? Join an app</Text>
@@ -146,7 +148,7 @@ export function HomeScreen() {
 
         <View className="flex-row items-center gap-3 rounded-2xl bg-surface-container p-4">
           <View className="h-9 w-9 items-center justify-center rounded-full bg-surface-container-lowest">
-            <Icon name="offline_bolt" size={20} color="#c0c1ff" />
+            <Icon name="offline_bolt" size={20} color={colors.primary} />
           </View>
           <View className="flex-1">
             <Text className="text-sm font-bold text-on-surface">Every app is instantly shareable</Text>

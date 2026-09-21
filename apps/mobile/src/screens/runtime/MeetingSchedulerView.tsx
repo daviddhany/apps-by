@@ -5,11 +5,13 @@ import { canDo } from "@needly/core";
 import { RecordForm } from "./RecordForm";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Icon } from "../../components/Icon";
+import { useThemeColors } from "../../theme/ThemeContext";
 
 /** Mirrors apps/web/.../MeetingSchedulerView.tsx — propose a few times, let
  * the group mark when they're free, surface whichever time has the most
  * marks. Reads/writes "meeting.meeting" and "meeting.availability". */
 export function MeetingSchedulerView({ appInstanceId, screen, records, allRecords, fields, actions, role, currentUserId, onMutate }: ScreenComponentProps) {
+  const colors = useThemeColors();
   const [adding, setAdding] = useState(false);
   const canPropose = canDo(actions, "add", role);
   const canMark = canDo(actions, "vote", role);
@@ -42,7 +44,7 @@ export function MeetingSchedulerView({ appInstanceId, screen, records, allRecord
                 <Text className="flex-1 text-base font-bold text-on-surface">{meeting.data.title as string}</Text>
                 {scheduled ? (
                   <View className="flex-row items-center gap-1 rounded-full bg-secondary-container px-2.5 py-1">
-                    <Icon name="check_circle" size={13} color="#490080" />
+                    <Icon name="check_circle" size={13} color={colors["on-secondary"]} />
                     <Text className="text-xs font-bold text-on-secondary-container">Confirmed</Text>
                   </View>
                 ) : null}
@@ -76,7 +78,7 @@ export function MeetingSchedulerView({ appInstanceId, screen, records, allRecord
                   onPress={() => onMutate({ action: "complete", entity: "meeting.meeting", payload: { meetingId: meeting.id } })}
                   className="mt-3 flex-row items-center gap-1"
                 >
-                  <Icon name="check_circle" size={16} color="#c0c1ff" />
+                  <Icon name="check_circle" size={16} color={colors.primary} />
                   <Text className="text-sm font-semibold text-primary">Confirm {best.option ?? "a time"}</Text>
                 </Pressable>
               ) : null}
@@ -87,7 +89,7 @@ export function MeetingSchedulerView({ appInstanceId, screen, records, allRecord
 
       {canPropose ? (
         <Pressable onPress={() => setAdding(true)} className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg">
-          <Icon name="add" size={26} color="#1000a9" />
+          <Icon name="add" size={26} color={colors["on-primary"]} />
         </Pressable>
       ) : null}
 

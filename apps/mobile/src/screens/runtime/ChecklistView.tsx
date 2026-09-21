@@ -5,8 +5,10 @@ import { canDo, labelFor } from "@needly/core";
 import { RecordForm } from "./RecordForm";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Icon } from "../../components/Icon";
+import { useThemeColors } from "../../theme/ThemeContext";
 
 export function ChecklistView({ appInstanceId, screen, records, allRecords, fields, actions, role, onMutate }: ScreenComponentProps) {
+  const colors = useThemeColors();
   const [adding, setAdding] = useState(false);
   const canAdd = canDo(actions, "add", role);
   const canComplete = canDo(actions, "complete", role) || canDo(actions, "checkin", role);
@@ -47,7 +49,7 @@ export function ChecklistView({ appInstanceId, screen, records, allRecords, fiel
 
       {canAdd ? (
         <Pressable onPress={() => setAdding(true)} className="absolute bottom-2 right-0 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg">
-          <Icon name="add" size={26} color="#1000a9" />
+          <Icon name="add" size={26} color={colors["on-primary"]} />
         </Pressable>
       ) : null}
 

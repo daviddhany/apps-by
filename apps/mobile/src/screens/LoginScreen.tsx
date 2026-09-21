@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ActivityIndicator, Image } from "react-native";
 import { useAuth } from "../api/AuthContext";
+import { useThemeColors } from "../theme/ThemeContext";
 
 export function LoginScreen({ navigation }: { navigation: { navigate: (screen: string) => void } }) {
   const { login } = useAuth();
+  const colors = useThemeColors();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +35,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (screen: s
         <View className="gap-3 rounded-2xl bg-surface-container-lowest p-5 shadow-sm">
           <TextInput
             placeholder="Email"
-            placeholderTextColor="#908fa0"
+            placeholderTextColor={colors.outline}
             autoCapitalize="none"
             keyboardType="email-address"
             value={email}
@@ -42,7 +44,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (screen: s
           />
           <TextInput
             placeholder="Password"
-            placeholderTextColor="#908fa0"
+            placeholderTextColor={colors.outline}
             secureTextEntry
             value={password}
             onChangeText={setPassword}
@@ -54,7 +56,7 @@ export function LoginScreen({ navigation }: { navigation: { navigate: (screen: s
             disabled={loading || !email || !password}
             className="mt-1 items-center rounded-full bg-primary py-3 active:opacity-80 disabled:opacity-50"
           >
-            {loading ? <ActivityIndicator color="#1000a9" /> : <Text className="text-base font-semibold text-on-primary">Sign in</Text>}
+            {loading ? <ActivityIndicator color={colors["on-primary"]} /> : <Text className="text-base font-semibold text-on-primary">Sign in</Text>}
           </Pressable>
         </View>
 

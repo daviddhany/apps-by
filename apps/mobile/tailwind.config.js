@@ -4,6 +4,18 @@
 // runs outside Metro's bundling pipeline, so importing the untranspiled
 // @needly/core TS source here isn't reliable. If the web palette changes,
 // mirror the change here too.
+//
+// Every color resolves through a CSS custom property (defined for both
+// themes in src/theme/tokens.ts and applied at the app root via NativeWind's
+// `vars()` — see src/theme/ThemeContext.tsx) instead of a literal hex value,
+// so toggling the theme re-themes the whole app without a reload. Each
+// variable stores "R G B" channel values so Tailwind's `/opacity` modifier
+// (e.g. `bg-primary/50`) keeps working — mirrors
+// https://tailwindcss.com/docs/customizing-colors#using-css-variables
+function themed(name) {
+  return `rgb(var(--color-${name}) / <alpha-value>)`;
+}
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./App.tsx", "./src/**/*.{ts,tsx}"],
@@ -11,63 +23,76 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "surface-bright": "#37393f",
-        surface: "#111318",
-        "surface-dim": "#111318",
-        "surface-container-lowest": "#0c0e13",
-        "surface-container-low": "#1a1b21",
-        "surface-container": "#1e1f25",
-        "surface-container-high": "#282a2f",
-        "surface-container-highest": "#33353a",
-        "surface-variant": "#33353a",
-        "on-surface": "#e2e2e9",
-        "on-surface-variant": "#c7c4d7",
-        "inverse-surface": "#e2e2e9",
-        "inverse-on-surface": "#2e3036",
-        outline: "#908fa0",
-        "outline-variant": "#464554",
-        background: "#111318",
-        "on-background": "#e2e2e9",
+        "surface-bright": themed("surface-bright"),
+        surface: themed("surface"),
+        "surface-dim": themed("surface-dim"),
+        "surface-container-lowest": themed("surface-container-lowest"),
+        "surface-container-low": themed("surface-container-low"),
+        "surface-container": themed("surface-container"),
+        "surface-container-high": themed("surface-container-high"),
+        "surface-container-highest": themed("surface-container-highest"),
+        "surface-variant": themed("surface-variant"),
+        "on-surface": themed("on-surface"),
+        "on-surface-variant": themed("on-surface-variant"),
+        "inverse-surface": themed("inverse-surface"),
+        "inverse-on-surface": themed("inverse-on-surface"),
+        outline: themed("outline"),
+        "outline-variant": themed("outline-variant"),
+        background: themed("background"),
+        "on-background": themed("on-background"),
 
         primary: {
-          DEFAULT: "#c0c1ff",
-          container: "#8083ff",
-          fixed: "#e1e0ff",
-          "fixed-dim": "#c0c1ff",
+          DEFAULT: themed("primary"),
+          container: themed("primary-container"),
+          fixed: themed("primary-fixed"),
+          "fixed-dim": themed("primary-fixed-dim"),
+          // legacy aliases used by earlier screens
+          dark: themed("primary-dark-alias"),
+          light: themed("primary-light-alias"),
         },
-        "on-primary": "#1000a9",
-        "on-primary-container": "#0d0096",
-        "on-primary-fixed": "#07006c",
-        "on-primary-fixed-variant": "#2f2ebe",
-        "inverse-primary": "#494bd6",
+        "on-primary": themed("on-primary"),
+        "on-primary-container": themed("on-primary-container"),
+        "on-primary-fixed": themed("on-primary-fixed"),
+        "on-primary-fixed-variant": themed("on-primary-fixed-variant"),
+        "inverse-primary": themed("inverse-primary"),
 
         secondary: {
-          DEFAULT: "#ddb7ff",
-          container: "#6f00be",
-          fixed: "#f0dbff",
-          "fixed-dim": "#ddb7ff",
+          DEFAULT: themed("secondary"),
+          container: themed("secondary-container"),
+          fixed: themed("secondary-fixed"),
+          "fixed-dim": themed("secondary-fixed-dim"),
         },
-        "on-secondary": "#490080",
-        "on-secondary-container": "#d6a9ff",
-        "on-secondary-fixed": "#2c0051",
-        "on-secondary-fixed-variant": "#6900b3",
+        "on-secondary": themed("on-secondary"),
+        "on-secondary-container": themed("on-secondary-container"),
+        "on-secondary-fixed": themed("on-secondary-fixed"),
+        "on-secondary-fixed-variant": themed("on-secondary-fixed-variant"),
 
         tertiary: {
-          DEFAULT: "#ffb2bd",
-          container: "#ef5f7f",
-          fixed: "#ffd9dd",
+          DEFAULT: themed("tertiary"),
+          container: themed("tertiary-container"),
+          fixed: themed("tertiary-fixed"),
+          "fixed-dim": themed("tertiary-fixed-dim"),
         },
-        "on-tertiary": "#670025",
-        "on-tertiary-container": "#5a001f",
-        "on-tertiary-fixed": "#400014",
-        "on-tertiary-fixed-variant": "#8c1038",
+        "on-tertiary": themed("on-tertiary"),
+        "on-tertiary-container": themed("on-tertiary-container"),
+        "on-tertiary-fixed": themed("on-tertiary-fixed"),
+        "on-tertiary-fixed-variant": themed("on-tertiary-fixed-variant"),
 
-        error: { DEFAULT: "#ffb4ab", container: "#93000a" },
-        "on-error": "#690005",
-        "on-error-container": "#ffdad6",
+        error: { DEFAULT: themed("error"), container: themed("error-container") },
+        "on-error": themed("on-error"),
+        "on-error-container": themed("on-error-container"),
+
+        // legacy short aliases (kept for components not yet ported)
+        ink: themed("ink"),
+        canvas: themed("canvas"),
+        accent: themed("accent"),
+        good: themed("good"),
+        warn: themed("warn"),
+        danger: themed("danger"),
 
         // Aurora spectrum — reserved for hero CTAs, active generation
         // states, and luminous ambient glows. Never for body text/surfaces.
+        // Fixed across both themes — it's a brand gradient, not a surface.
         aurora: {
           indigo: "#6366F1",
           violet: "#A855F7",

@@ -5,6 +5,7 @@ import { apiFetch } from "../api/client";
 import { AppHeader } from "../components/AppHeader";
 import { Icon } from "../components/Icon";
 import { useAuth } from "../api/AuthContext";
+import { useThemeColors } from "../theme/ThemeContext";
 
 interface FriendEntry {
   id: string;
@@ -16,6 +17,7 @@ interface FriendEntry {
 
 export function FriendsScreen() {
   const { user } = useAuth();
+  const colors = useThemeColors();
   const [friends, setFriends] = useState<FriendEntry[]>([]);
   const [incoming, setIncoming] = useState<FriendEntry[]>([]);
   const [outgoing, setOutgoing] = useState<FriendEntry[]>([]);
@@ -96,7 +98,7 @@ export function FriendsScreen() {
             <View className="flex-row gap-2">
               <TextInput
                 placeholder="Their email address"
-                placeholderTextColor="#908fa0"
+                placeholderTextColor={colors.outline}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 value={email}
@@ -104,7 +106,7 @@ export function FriendsScreen() {
                 className="flex-1 rounded-2xl bg-surface-container-low px-3.5 py-2.5 text-base text-on-surface"
               />
               <Pressable disabled={sending || !email} onPress={sendRequest} className="items-center justify-center rounded-full bg-primary px-5 disabled:opacity-50">
-                {sending ? <ActivityIndicator color="#1000a9" /> : <Text className="font-semibold text-on-primary">Add</Text>}
+                {sending ? <ActivityIndicator color={colors["on-primary"]} /> : <Text className="font-semibold text-on-primary">Add</Text>}
               </Pressable>
             </View>
             {error ? <Text className="text-sm text-error">{error}</Text> : null}
@@ -132,10 +134,10 @@ export function FriendsScreen() {
                   {section.kind === "incoming" ? (
                     <View className="flex-row items-center gap-1.5">
                       <Pressable disabled={busyId === f.id} onPress={() => respond(f.id, "decline")} className="h-9 w-9 items-center justify-center rounded-full bg-error-container">
-                        <Icon name="close" size={18} color="#ffdad6" />
+                        <Icon name="close" size={18} color={colors["on-error-container"]} />
                       </Pressable>
                       <Pressable disabled={busyId === f.id} onPress={() => respond(f.id, "accept")} className="h-9 w-9 items-center justify-center rounded-full bg-secondary-container">
-                        <Icon name="check" size={18} color="#d6a9ff" />
+                        <Icon name="check" size={18} color={colors["on-secondary-container"]} />
                       </Pressable>
                     </View>
                   ) : (

@@ -8,16 +8,18 @@ import { AppRuntimeScreen } from "../screens/AppRuntimeScreen";
 import { JoinScreen } from "../screens/JoinScreen";
 import { FriendsScreen } from "../screens/FriendsScreen";
 import { AccountSettingsScreen } from "../screens/AccountSettingsScreen";
+import { useThemeColors } from "../theme/ThemeContext";
 
 const Stack = createNativeStackNavigator();
 
 export function RootNavigator() {
   const { user, loading } = useAuth();
+  const colors = useThemeColors();
 
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-surface">
-        <ActivityIndicator size="large" color="#c0c1ff" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }

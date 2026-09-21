@@ -52,6 +52,28 @@ function extractPeopleCount(text: string): number | undefined {
 export class HeuristicAIProvider implements AIProvider {
   name = "heuristic";
 
+  /** No language model available offline, so this is a light, honest
+   * touch-up rather than a rewrite: fix casing/punctuation, and nudge in
+   * the group language the matcher's keyword scoring responds to when the
+   * draft reads like a solo task rather than something a group needs. */
+  async improveNeed(text: string): Promise<string> {
+    let improved = text.trim().replace(/\s+/g, " ");
+    if (!improved) return improved;
+
+    improved = improved[0].toUpperCase() + improved.slice(1);
+    if (!/[.!?]$/.test(improved)) improved += ".";
+
+    const hasGroupLanguage = /\b(we|us|our|team|friends|group|everyone|together|players|members)\b/i.test(improved);
+    if (!hasGroupLanguage) {
+      // Two independent sentences rather than splicing a lead-in before the
+      // original text, so this reads fine whether the draft was a verb
+      // phrase ("split our trip costs") or a noun phrase ("party planner").
+      improved = `We're a group and need this. ${improved}`;
+    }
+
+    return improved;
+  }
+
   async understandNeed(text: string, _context: AIProviderContext): Promise<NeedClassification> {
     // A single one-off reminder ("remind me to call mom at 6pm") is short and
     // names exactly one thing. A request that talks ABOUT building a

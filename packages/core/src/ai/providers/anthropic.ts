@@ -24,6 +24,26 @@ export class AnthropicAIProvider implements AIProvider {
     this.client = new Anthropic({ apiKey });
   }
 
+  async improveNeed(text: string): Promise<string> {
+    if (!text.trim()) return text;
+    const prompt = `Rewrite this draft description of something a group needs so it's clearer and more detailed, so it can be used to generate a collaborative mini-app: "${text}".
+Keep the user's original intent and meaning exactly — just fill in the kind of detail that's missing (who's involved, roughly how many people, what specifically should be tracked or decided). Keep it to 1-2 sentences, first person plural ("we"). Respond with ONLY the rewritten text, no quotes, no preamble.`;
+
+    try {
+      const response = await this.client.messages.create({
+        model: this.model,
+        max_tokens: 300,
+        messages: [{ role: "user", content: prompt }],
+      });
+      const textBlock = response.content.find((b) => b.type === "text");
+      if (!textBlock || textBlock.type !== "text") return this.base.improveNeed(text);
+      const improved = textBlock.text.trim().replace(/^["']|["']$/g, "");
+      return improved || this.base.improveNeed(text);
+    } catch {
+      return this.base.improveNeed(text);
+    }
+  }
+
   understandNeed(text: string, context: AIProviderContext) {
     return this.base.understandNeed(text, context);
   }

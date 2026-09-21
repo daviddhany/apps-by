@@ -35,9 +35,23 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
   const [preview, setPreview] = useState<SpecPreview | null>(null);
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [improving, setImproving] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
+
+  async function improvePrompt() {
+    if (!text.trim() || improving) return;
+    setImproving(true);
+    try {
+      const result = await apiFetch<{ improved: string }>("/api/needs/improve", { method: "POST", body: JSON.stringify({ text }) });
+      setText(result.improved);
+    } catch {
+      // Non-critical — leave the draft as the user wrote it.
+    } finally {
+      setImproving(false);
+    }
+  }
 
   async function submit(value: string) {
     if (!value.trim() || loading) return;
@@ -167,9 +181,16 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
               }
             }}
           />
-          <div className="pointer-events-none absolute right-3 top-3 text-primary-container opacity-40">
-            <Icon name="auto_awesome" size={20} />
-          </div>
+          <button
+            type="button"
+            onClick={improvePrompt}
+            disabled={!text.trim() || improving}
+            aria-label="Improve prompt"
+            title="Improve prompt"
+            className="tap absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-primary-container transition-all hover:bg-surface-container-high disabled:opacity-40"
+          >
+            <Icon name="auto_awesome" size={20} filled={improving} className={improving ? "animate-pulse" : ""} />
+          </button>
         </div>
 
         <div className="flex items-center justify-between gap-space-xs pt-1">

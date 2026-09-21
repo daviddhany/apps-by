@@ -27,9 +27,23 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
   const [stage, setStage] = useState(0);
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [improving, setImproving] = useState(false);
   const stageTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => () => { if (stageTimer.current) clearInterval(stageTimer.current); }, []);
+
+  async function improvePrompt() {
+    if (!text.trim() || improving) return;
+    setImproving(true);
+    try {
+      const result = await apiFetch<{ improved: string }>("/api/needs/improve", { method: "POST", body: JSON.stringify({ text }) });
+      setText(result.improved);
+    } catch {
+      // Non-critical — leave the draft as the user wrote it.
+    } finally {
+      setImproving(false);
+    }
+  }
 
   async function submit(value: string) {
     if (!value.trim() || loading) return;
@@ -79,9 +93,13 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
             className="rounded-2xl bg-surface-container-low p-4 text-base text-on-surface"
             style={{ minHeight: 88, textAlignVertical: "top" }}
           />
-          <View className="absolute right-3 top-3 opacity-40">
-            <Icon name="auto_awesome" size={20} color="#8083ff" />
-          </View>
+          <Pressable
+            onPress={improvePrompt}
+            disabled={!text.trim() || improving}
+            className="absolute right-2 top-2 h-8 w-8 items-center justify-center rounded-full disabled:opacity-40"
+          >
+            {improving ? <ActivityIndicator size="small" color="#8083ff" /> : <Icon name="auto_awesome" size={20} color="#8083ff" />}
+          </Pressable>
         </View>
 
         <View className="flex-row items-center justify-between pt-1">

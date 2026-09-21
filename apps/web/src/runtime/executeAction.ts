@@ -225,6 +225,17 @@ async function runExecutor(appInstanceId: string, actorId: string, schemaKey: st
       const merged = { ...JSON.parse(quiz.data), status: "closed" };
       return db.appData.update({ where: { id: payload.quizId }, data: { data: JSON.stringify(merged) } });
     }
+    case "journal.answer": {
+      const raw = mutation.payload as { date: string; question: string; answer: string };
+      const payload = ActionPayloadSchemas["journal.answer"].parse(raw);
+      const existing = await db.appData.findMany({ where: { appInstanceId, entityType: "journal.entry" } });
+      const duplicate = existing.find((e) => {
+        const d = JSON.parse(e.data) as { authorId: string; date: string };
+        return d.authorId === actorId && d.date === payload.date;
+      });
+      if (duplicate) throw new ActionError("You've already answered today's question", 409);
+      return db.appData.create({ data: { appInstanceId, entityType: "journal.entry", data: JSON.stringify({ ...payload, authorId: actorId }), createdById: actorId } });
+    }
     case "savings.contribute": {
       const raw = mutation.payload as { participantId: string; amount: number };
       const participantId = await resolvePersonRef(appInstanceId, "savings.participant", raw.participantId);

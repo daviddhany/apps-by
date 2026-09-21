@@ -50,7 +50,8 @@ export type ComponentKey =
   | "dashboard"
   | "member_list"
   | "meeting_scheduler"
-  | "trivia_quiz";
+  | "trivia_quiz"
+  | "daily_journal";
 
 export interface ScreenDef {
   id: string;

@@ -45,6 +45,7 @@ export const ComponentKeySchema = z.enum([
   "member_list",
   "meeting_scheduler",
   "trivia_quiz",
+  "daily_journal",
 ]);
 
 export const ScreenDefSchema = z.object({
@@ -187,6 +188,7 @@ export const ActionPayloadSchemas = {
   "meeting.close": z.object({ meetingId: z.string() }),
   "quiz.answer": z.object({ questionId: z.string(), optionText: z.string() }),
   "quiz.close": z.object({ quizId: z.string() }),
+  "journal.answer": z.object({ date: z.string(), question: z.string(), answer: z.string().min(1).max(280) }),
   "savings.contribute": z.object({ participantId: z.string(), amount: z.number().positive() }),
   "habit.checkin": z.object({ participantId: z.string(), date: z.string(), done: z.boolean() }),
   "reservation.reserve": z.object({ resourceId: z.string(), participantId: z.string(), start: z.string(), end: z.string() }),

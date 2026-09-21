@@ -26,6 +26,7 @@ const ICON_BY_SLUG: Record<string, string> = {
   "trip-planner": "car",
   "meeting-scheduler": "check-square",
   "trivia-quiz": "trophy",
+  "daily-journal": "sparkles",
 };
 
 const NUMBER_WORDS: Record<string, number> = {

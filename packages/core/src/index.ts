@@ -12,6 +12,7 @@ export * from "./tool-dna/buildSpec";
 export * from "./tool-dna/compose";
 export * from "./tool-dna/namespaces";
 export * from "./tool-dna/remix";
+export * from "./tool-dna/dailyQuestions";
 
 export * from "./ai/provider";
 export * from "./ai/match";

@@ -16,6 +16,7 @@ export const TOOL_DNA_NAMESPACE: Record<string, string> = {
   "trip-planner": "trip",
   "meeting-scheduler": "meeting",
   "trivia-quiz": "quiz",
+  "daily-journal": "journal",
 };
 
 export function namespaceFor(slug: string): string {

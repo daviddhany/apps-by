@@ -34,6 +34,12 @@ const NAME_MAP: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   delete_forever: "delete-forever",
   lock: "lock",
   public: "public",
+  group: "group",
+  settings: "settings",
+  person_remove: "person-remove",
+  add_a_photo: "add-a-photo",
+  visibility: "visibility",
+  visibility_off: "visibility-off",
 };
 
 export function Icon({ name, size = 20, color = "#e2e2e9" }: { name: string; size?: number; color?: string }) {

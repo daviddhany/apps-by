@@ -1,9 +1,27 @@
+import { useCallback, useState } from "react";
 import { View, Text, Pressable } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppHeader } from "../components/AppHeader";
+import { Icon } from "../components/Icon";
+import { apiFetch } from "../api/client";
 import { useAuth } from "../api/AuthContext";
 
 export function ProfileScreen() {
   const { user, logout } = useAuth();
+  const navigation = useNavigation<any>();
+  const [friendCount, setFriendCount] = useState(0);
+  const [incomingCount, setIncomingCount] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      apiFetch<{ friends: unknown[]; incoming: unknown[] }>("/api/friends")
+        .then((r) => {
+          setFriendCount(r.friends.length);
+          setIncomingCount(r.incoming.length);
+        })
+        .catch(() => {});
+    }, [])
+  );
 
   return (
     <View className="flex-1 bg-surface">
@@ -16,6 +34,32 @@ export function ProfileScreen() {
           <Text className="text-lg font-bold text-on-surface">{user?.name}</Text>
           <Text className="text-sm text-on-surface-variant">{user?.email}</Text>
         </View>
+
+        <Pressable onPress={() => navigation.navigate("Friends")} className="flex-row items-center justify-between rounded-2xl bg-surface-container-lowest px-4 py-3.5">
+          <View className="flex-row items-center gap-3">
+            <Icon name="group" size={20} color="#c0c1ff" />
+            <View>
+              <Text className="text-base font-bold text-on-surface">Friends</Text>
+              <Text className="text-xs text-on-surface-variant">{friendCount} friend{friendCount === 1 ? "" : "s"}</Text>
+            </View>
+          </View>
+          <View className="flex-row items-center gap-2">
+            {incomingCount > 0 ? (
+              <View className="rounded-full bg-tertiary px-2 py-0.5">
+                <Text className="text-xs font-bold text-on-tertiary">{incomingCount}</Text>
+              </View>
+            ) : null}
+            <Icon name="chevron_right" size={20} color="#94A3B8" />
+          </View>
+        </Pressable>
+
+        <Pressable onPress={() => navigation.navigate("AccountSettings")} className="flex-row items-center justify-between rounded-2xl bg-surface-container-lowest px-4 py-3.5">
+          <View className="flex-row items-center gap-3">
+            <Icon name="settings" size={20} color="#c0c1ff" />
+            <Text className="text-base font-bold text-on-surface">Account settings</Text>
+          </View>
+          <Icon name="chevron_right" size={20} color="#94A3B8" />
+        </Pressable>
 
         <View className="rounded-2xl bg-surface-container-lowest p-5">
           <Text className="text-base font-bold text-on-surface">Plan: Free</Text>

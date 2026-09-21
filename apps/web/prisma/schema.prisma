@@ -28,6 +28,8 @@ model User {
   notifications Notification[]
   invitations   Invitation[]    @relation("InvitationInviter")
   joinRequests  JoinRequest[]
+  friendRequestsSent     Friendship[] @relation("FriendRequester")
+  friendRequestsReceived Friendship[] @relation("FriendAddressee")
 }
 
 model ToolDNA {
@@ -185,6 +187,19 @@ model JoinRequest {
   respondedById String?
 
   @@unique([appInstanceId, userId])
+}
+
+model Friendship {
+  id            String    @id @default(cuid())
+  requesterId   String
+  requester     User      @relation("FriendRequester", fields: [requesterId], references: [id])
+  addresseeId   String
+  addressee     User      @relation("FriendAddressee", fields: [addresseeId], references: [id])
+  status        String    @default("pending") // pending | accepted | declined
+  createdAt     DateTime  @default(now())
+  respondedAt   DateTime?
+
+  @@unique([requesterId, addresseeId])
 }
 
 model Invitation {

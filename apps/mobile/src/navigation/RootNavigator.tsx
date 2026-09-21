@@ -6,6 +6,8 @@ import { RegisterScreen } from "../screens/RegisterScreen";
 import { MainTabs } from "./MainTabs";
 import { AppRuntimeScreen } from "../screens/AppRuntimeScreen";
 import { JoinScreen } from "../screens/JoinScreen";
+import { FriendsScreen } from "../screens/FriendsScreen";
+import { AccountSettingsScreen } from "../screens/AccountSettingsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +29,8 @@ export function RootNavigator() {
           <Stack.Screen name="Main" component={MainTabs} />
           <Stack.Screen name="AppRuntime" component={AppRuntimeScreen} />
           <Stack.Screen name="Join" component={JoinScreen} />
+          <Stack.Screen name="Friends" component={FriendsScreen} />
+          <Stack.Screen name="AccountSettings" component={AccountSettingsScreen} />
         </>
       ) : (
         <>

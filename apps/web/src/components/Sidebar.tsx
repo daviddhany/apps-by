@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/", label: "Home", icon: "auto_awesome" },
   { href: "/apps", label: "My Apps", icon: "dashboard" },
   { href: "/discover", label: "Discover", icon: "explore" },
+  { href: "/friends", label: "Friends", icon: "group" },
 ];
 
 /** Desktop/tablet workspace rail — mirrors the Stitch web mockups' sidebar

@@ -8,6 +8,27 @@ import { listSimpleToolDna } from "../../tool-dna/registry";
 import { runGenerativePlanner } from "../generativePlanner";
 import { extractJson } from "../jsonExtract";
 
+// Gemini returns a transient 503 ("high demand") or 429 (rate limit) fairly
+// often — retry those a couple of times with backoff before giving up.
+// Anything else (bad model name, auth failure, malformed request) fails
+// immediately, since retrying those would just waste time.
+async function withRetry<T>(fn: () => Promise<T>, attempts = 3, baseDelayMs = 1500): Promise<T> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      const status = (err as { status?: number } | undefined)?.status;
+      if (status !== 503 && status !== 429) throw err;
+      if (attempt < attempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, baseDelayMs * (attempt + 1)));
+      }
+    }
+  }
+  throw lastErr;
+}
+
 /**
  * Mirrors AnthropicAIProvider's structure: wraps HeuristicAIProvider for the
  * deterministic paths (understandNeed/selectToolDNA/mutateApplication/
@@ -34,7 +55,7 @@ export class GeminiAIProvider implements AIProvider {
 Keep the user's original intent and meaning exactly — just fill in the kind of detail that's missing (who's involved, roughly how many people, what specifically should be tracked or decided). Keep it to 1-2 sentences, first person plural ("we"). Respond with ONLY the rewritten text, no quotes, no preamble.`;
 
     try {
-      const response = await this.client.models.generateContent({ model: this.model, contents: prompt });
+      const response = await withRetry(() => this.client.models.generateContent({ model: this.model, contents: prompt }));
       const improved = (response.text ?? "").trim().replace(/^["']|["']$/g, "");
       return improved || this.base.improveNeed(text);
     } catch {
@@ -60,11 +81,13 @@ Keep the user's original intent and meaning exactly — just fill in the kind of
 None of our existing reusable Tool DNA templates matched well: ${JSON.stringify(toolCatalog)}.
 Produce a JSON MiniAppSpecification (fields: version, toolDnaSlug (array of strings, invent one new slug), title, icon, entities, fields, screens, features, settings, rules, roles, actions, computed) that models this need using ONLY these universal component keys for screens: list, table, cards, form, checklist, calendar, timeline, kanban, counter, progress, chart, voting, leaderboard, bracket, gallery, dashboard, member_list. Respond with JSON only, no prose.`;
 
-    const response = await this.client.models.generateContent({
-      model: this.model,
-      contents: prompt,
-      config: { responseMimeType: "application/json" },
-    });
+    const response = await withRetry(() =>
+      this.client.models.generateContent({
+        model: this.model,
+        contents: prompt,
+        config: { responseMimeType: "application/json" },
+      })
+    );
     if (!response.text) throw new Error("AI provider returned no content");
 
     const parsed = JSON.parse(extractJson(response.text));
@@ -86,11 +109,13 @@ Produce a JSON MiniAppSpecification (fields: version, toolDnaSlug (array of stri
   async planApp(text: string, context: PlannerContext): Promise<PlannerResult> {
     return runGenerativePlanner(
       async (prompt) => {
-        const response = await this.client.models.generateContent({
-          model: this.model,
-          contents: prompt,
-          config: { responseMimeType: "application/json" },
-        });
+        const response = await withRetry(() =>
+          this.client.models.generateContent({
+            model: this.model,
+            contents: prompt,
+            config: { responseMimeType: "application/json" },
+          })
+        );
         if (!response.text) throw new Error("AI provider returned no content");
         return response.text;
       },

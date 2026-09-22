@@ -109,7 +109,15 @@ export async function handleNeed(text: string, userId: string): Promise<NeedOutc
   // HeuristicAIProvider's planApp falls back to today's selectToolDNA +
   // generateSpecification behavior internally.
   await ensureToolDnaSeeded();
-  const planned = await ai.planApp(text, { hasExistingApps });
+  let planned;
+  try {
+    planned = await ai.planApp(text, { hasExistingApps });
+  } catch {
+    // A provider-level failure (network error, rate limit, temporary
+    // outage) — never leak the raw error to the user; ask them to retry
+    // rather than silently falling back to template matching.
+    return { kind: "clarify", question: "The AI planner is temporarily unavailable — please try again in a moment." };
+  }
 
   if (planned.status === "clarify") {
     return { kind: "clarify", question: planned.question };

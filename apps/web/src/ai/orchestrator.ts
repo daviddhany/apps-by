@@ -112,10 +112,12 @@ export async function handleNeed(text: string, userId: string): Promise<NeedOutc
   let planned;
   try {
     planned = await ai.planApp(text, { hasExistingApps });
-  } catch {
+  } catch (err) {
     // A provider-level failure (network error, rate limit, temporary
     // outage) — never leak the raw error to the user; ask them to retry
-    // rather than silently falling back to template matching.
+    // rather than silently falling back to template matching. Logged
+    // server-side so the actual cause is visible in the dev console.
+    console.error("[handleNeed] ai.planApp failed:", err);
     return { kind: "clarify", question: "The AI planner is temporarily unavailable — please try again in a moment." };
   }
 

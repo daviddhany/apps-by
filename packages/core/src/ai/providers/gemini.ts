@@ -22,7 +22,7 @@ export class GeminiAIProvider implements AIProvider {
   name = "gemini";
   private base = new HeuristicAIProvider();
   private client: GoogleGenAI;
-  private model = "gemini-3.8-flash";
+  private model = "gemini-3.6-flash";
 
   constructor(apiKey: string) {
     this.client = new GoogleGenAI({ apiKey });

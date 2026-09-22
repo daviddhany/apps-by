@@ -19,7 +19,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (!parsed.success) return NextResponse.json({ error: "Say what you'd like to change" }, { status: 400 });
 
     const role = membership.role as MemberRole;
-    const ai = getAIProvider(process.env.ANTHROPIC_API_KEY);
+    const ai = getAIProvider({ anthropicKey: process.env.ANTHROPIC_API_KEY, geminiKey: process.env.GEMINI_API_KEY });
     const started = Date.now();
     const result = await ai.mutateApplication(parsed.data.text, spec, role);
 

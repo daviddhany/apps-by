@@ -18,8 +18,10 @@ export * from "./ai/provider";
 export * from "./ai/match";
 export * from "./ai/embeddings";
 export * from "./ai/index";
+export * from "./ai/generativePlanner";
 export { HeuristicAIProvider } from "./ai/providers/heuristic";
 export { AnthropicAIProvider } from "./ai/providers/anthropic";
+export { GeminiAIProvider } from "./ai/providers/gemini";
 
 export * from "./runtime/screenProps";
 export * from "./runtime/compute";

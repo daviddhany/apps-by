@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: "Nothing to improve" }, { status: 400 });
 
   try {
-    const ai = getAIProvider(process.env.ANTHROPIC_API_KEY);
+    const ai = getAIProvider({ anthropicKey: process.env.ANTHROPIC_API_KEY, geminiKey: process.env.GEMINI_API_KEY });
     const improved = await ai.improveNeed(parsed.data.text);
     return NextResponse.json({ improved });
   } catch (err) {

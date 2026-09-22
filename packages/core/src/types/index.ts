@@ -52,7 +52,8 @@ export type ComponentKey =
   | "meeting_scheduler"
   | "trivia_quiz"
   | "daily_journal"
-  | "poll";
+  | "poll"
+  | "standings";
 
 export interface ScreenDef {
   id: string;

@@ -19,7 +19,8 @@ type Outcome =
   | { kind: "chat_answer"; text: string }
   | { kind: "reminder"; text: string; at?: string }
   | { kind: "clarify"; question: string }
-  | { kind: "mini_app"; appInstanceId: string; title: string };
+  | { kind: "mini_app"; appInstanceId: string; title: string }
+  | { kind: "unsupported_capability"; missing: string; explanation: string };
 
 export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
   const navigation = useNavigation<any>();
@@ -190,6 +191,13 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
       {outcome?.kind === "clarify" ? (
         <View className="mt-4 rounded-2xl bg-tertiary-fixed p-4">
           <Text className="text-sm text-on-tertiary-fixed-variant">{outcome.question}</Text>
+        </View>
+      ) : null}
+
+      {outcome?.kind === "unsupported_capability" ? (
+        <View className="mt-4 rounded-2xl bg-error-container p-4">
+          <Text className="text-sm font-semibold text-on-error-container">I can&rsquo;t build {outcome.missing} yet.</Text>
+          <Text className="mt-1 text-sm text-on-error-container">{outcome.explanation}</Text>
         </View>
       ) : null}
     </View>

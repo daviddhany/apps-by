@@ -7,6 +7,7 @@ import type {
   ToolDnaMatchResult,
 } from "../../types";
 import type { AIProvider, AIProviderContext } from "../provider";
+import type { PlannerContext, PlannerResult } from "../generativePlanner";
 import { matchToolDna } from "../match";
 import { getToolDna } from "../../tool-dna/registry";
 import { buildSpec, mergeToolIntoSpec } from "../../tool-dna/buildSpec";
@@ -279,6 +280,23 @@ export class HeuristicAIProvider implements AIProvider {
 
   async summarizeApplication(spec: MiniAppSpecification): Promise<string> {
     return `${spec.title}: ${spec.entities.length} data types across ${spec.screens.length} screens.`;
+  }
+
+  /** No LLM available offline, so this can't compose a novel spec from the
+   * primitive registry — it's today's exact selectToolDNA + generateSpecification
+   * behavior, reshaped to PlannerResult, so callers can invoke planApp
+   * uniformly regardless of which provider is active. */
+  async planApp(text: string, _context: PlannerContext): Promise<PlannerResult> {
+    const match = await this.selectToolDNA(text);
+    if (match.decision === "clarify") {
+      return { status: "clarify", question: match.clarifyingQuestion ?? "Could you tell me more about what you need?" };
+    }
+    try {
+      const spec = await this.generateSpecification(text, match);
+      return { status: "ok", spec };
+    } catch (err) {
+      return { status: "clarify", question: err instanceof Error ? err.message : "Could you describe that differently?" };
+    }
   }
 }
 

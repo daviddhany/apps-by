@@ -50,7 +50,8 @@ export type NeedOutcome =
   | { kind: "chat_answer"; text: string }
   | { kind: "reminder"; text: string; at?: string }
   | { kind: "clarify"; question: string }
-  | { kind: "mini_app"; appInstanceId: string; title: string };
+  | { kind: "mini_app"; appInstanceId: string; title: string }
+  | { kind: "unsupported_capability"; missing: string; explanation: string };
 
 /** "Surprise me" — skip the text/AI classification entirely and instantly
  * create an app from a randomly chosen Tool DNA template, for people who
@@ -71,7 +72,7 @@ export async function handleSurpriseMe(userId: string): Promise<NeedOutcome> {
  */
 export async function handleNeed(text: string, userId: string): Promise<NeedOutcome> {
   const started = Date.now();
-  const ai = getAIProvider(process.env.ANTHROPIC_API_KEY);
+  const ai = getAIProvider({ anthropicKey: process.env.ANTHROPIC_API_KEY, geminiKey: process.env.GEMINI_API_KEY });
   const hasExistingApps = (await db.appMember.count({ where: { userId } })) > 0;
 
   const classification = await ai.understandNeed(text, { hasExistingApps });
@@ -102,20 +103,21 @@ export async function handleNeed(text: string, userId: string): Promise<NeedOutc
     return { kind: "chat_answer", text: classification.chatAnswer ?? "I'm not sure — could you rephrase that as something you need to track or coordinate?" };
   }
 
-  // mini_app
+  // mini_app: composed directly from the primitive registry (see
+  // generativePlanner.ts) rather than matched against the fixed Tool DNA
+  // catalog — ensureToolDnaSeeded() is still needed because the offline
+  // HeuristicAIProvider's planApp falls back to today's selectToolDNA +
+  // generateSpecification behavior internally.
   await ensureToolDnaSeeded();
-  const match = await ai.selectToolDNA(text);
-  if (match.decision === "clarify") {
-    return { kind: "clarify", question: match.clarifyingQuestion ?? "Could you tell me more about what you need?" };
+  const planned = await ai.planApp(text, { hasExistingApps });
+
+  if (planned.status === "clarify") {
+    return { kind: "clarify", question: planned.question };
+  }
+  if (planned.status === "unsupported_capability") {
+    return { kind: "unsupported_capability", missing: planned.missing, explanation: planned.explanation };
   }
 
-  let spec: MiniAppSpecification;
-  try {
-    spec = await ai.generateSpecification(text, match);
-  } catch (err) {
-    return { kind: "clarify", question: err instanceof Error ? err.message : "Could you describe that differently?" };
-  }
-
-  const appInstance = await persistApp(spec, userId);
-  return { kind: "mini_app", appInstanceId: appInstance.id, title: spec.title };
+  const appInstance = await persistApp(planned.spec, userId);
+  return { kind: "mini_app", appInstanceId: appInstance.id, title: planned.spec.title };
 }

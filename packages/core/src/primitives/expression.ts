@@ -285,24 +285,95 @@ export const EXPRESSION_FUNCTIONS = {
     }
     return out;
   },
+  // filter(list, field, value): rows where row[field] === value. Composes
+  // with count/sum/groupCount for free (e.g. a "one vote per person" guard:
+  // count(filter(votes, 'voterId', actor.id)) == 0) — general-purpose, not
+  // tied to any one concept.
+  filter(list: unknown, field: unknown, value: unknown): CollectionRow[] {
+    if (!Array.isArray(list)) throw new ExpressionError("filter() expects a collection");
+    if (typeof field !== "string") throw new ExpressionError("filter() expects a field name string");
+    return (list as CollectionRow[]).filter((row) => row[field] === value);
+  },
+  // groupSum(list, groupField, valueField): sum of valueField per distinct
+  // groupField value — generalizes groupCount from counting to summing
+  // (e.g. points-based standings).
+  groupSum(list: unknown, groupField: unknown, valueField: unknown): Record<string, number> {
+    if (!Array.isArray(list)) throw new ExpressionError("groupSum() expects a collection");
+    if (typeof groupField !== "string") throw new ExpressionError("groupSum() expects a group field name string");
+    if (typeof valueField !== "string") throw new ExpressionError("groupSum() expects a value field name string");
+    const out: Record<string, number> = {};
+    for (const row of list as CollectionRow[]) {
+      const key = String(row[groupField]);
+      out[key] = (out[key] ?? 0) + (Number(row[valueField]) || 0);
+    }
+    return out;
+  },
+  // topNByGroup(list, groupField, n): the n most-frequent groupField values,
+  // ranked by count, as a string array.
+  topNByGroup(list: unknown, groupField: unknown, n: unknown): string[] {
+    if (!Array.isArray(list)) throw new ExpressionError("topNByGroup() expects a collection");
+    if (typeof groupField !== "string") throw new ExpressionError("topNByGroup() expects a field name string");
+    const limit = Number(n);
+    if (!Number.isFinite(limit) || limit < 0) throw new ExpressionError("topNByGroup() expects a non-negative count");
+    const counts: Record<string, number> = {};
+    for (const row of list as CollectionRow[]) {
+      const key = String(row[groupField]);
+      counts[key] = (counts[key] ?? 0) + 1;
+    }
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([key]) => key);
+  },
+  // The three sampling functions below are non-deterministic and are only
+  // permitted in an action's `effects` (evaluated once, at write time, with
+  // the result persisted) — never in a `guard` or a `computed.formula`,
+  // which must stay pure. Enforced by validateExpression via
+  // NONDETERMINISTIC_FUNCTIONS + ExpressionSchemaContext.allowNonDeterministic.
+  random(): number {
+    return Math.random();
+  },
+  pickRandom(list: unknown): unknown {
+    if (!Array.isArray(list)) throw new ExpressionError("pickRandom() expects a collection");
+    if (list.length === 0) return null;
+    return list[Math.floor(Math.random() * list.length)];
+  },
+  pickRandomField(list: unknown, field: unknown): unknown {
+    if (!Array.isArray(list)) throw new ExpressionError("pickRandomField() expects a collection");
+    if (typeof field !== "string") throw new ExpressionError("pickRandomField() expects a field name string");
+    if (list.length === 0) return null;
+    const row = (list as CollectionRow[])[Math.floor(Math.random() * list.length)];
+    return row[field];
+  },
 } as const;
 
 export type ExpressionFunctionName = keyof typeof EXPRESSION_FUNCTIONS;
 export const EXPRESSION_FUNCTION_NAMES = Object.keys(EXPRESSION_FUNCTIONS) as ExpressionFunctionName[];
 
-// Which argument position (0-based) of each function is a "field name"
+export const NONDETERMINISTIC_FUNCTIONS: ReadonlySet<ExpressionFunctionName> = new Set(["random", "pickRandom", "pickRandomField"]);
+
+// Which argument positions (0-based) of each function are a "field name"
 // referring to a field on the collection named in a sibling argument —
 // used by validateExpression to check the field actually exists on that
 // collection, and by nothing else (the interpreter itself just reads the
 // string literal value at that position).
-const FIELD_NAME_ARG_INDEX: Partial<Record<ExpressionFunctionName, number>> = {
-  sum: 1,
-  groupCount: 1,
+const FIELD_NAME_ARG_INDEX: Partial<Record<ExpressionFunctionName, number[]>> = {
+  sum: [1],
+  groupCount: [1],
+  filter: [1],
+  groupSum: [1, 2],
+  topNByGroup: [1],
+  pickRandomField: [1],
 };
 const COLLECTION_ARG_INDEX: Partial<Record<ExpressionFunctionName, number>> = {
   count: 0,
   sum: 0,
   groupCount: 0,
+  filter: 0,
+  groupSum: 0,
+  topNByGroup: 0,
+  pickRandom: 0,
+  pickRandomField: 0,
 };
 
 // --- Validation (schema-authoring time, never at execution time) -------
@@ -310,6 +381,10 @@ const COLLECTION_ARG_INDEX: Partial<Record<ExpressionFunctionName, number>> = {
 export interface ExpressionSchemaContext {
   // collection name -> set of its declared field names
   collections: Record<string, Set<string>>;
+  // Only true when validating an action's `effects` formulas — the one place
+  // the non-deterministic sampling functions (random/pickRandom/
+  // pickRandomField) are allowed. Defaults to false (guard/computed.formula).
+  allowNonDeterministic?: boolean;
 }
 
 const MAX_NODES = 200;
@@ -363,8 +438,12 @@ export function validateExpression(source: string, ctx: ExpressionSchemaContext)
           return;
         }
         const fnName = node.name as ExpressionFunctionName;
+        if (NONDETERMINISTIC_FUNCTIONS.has(fnName) && !ctx.allowNonDeterministic) {
+          errors.push(`${fnName}() is only allowed in an action's effects, not in a guard or computed formula`);
+          return;
+        }
         node.args.forEach((arg, argIndex) => {
-          if (FIELD_NAME_ARG_INDEX[fnName] === argIndex) {
+          if (FIELD_NAME_ARG_INDEX[fnName]?.includes(argIndex)) {
             if (arg.type !== "str") {
               errors.push(`${fnName}() argument ${argIndex + 1} must be a field name string literal`);
               return;

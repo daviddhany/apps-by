@@ -1,9 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { AIActionResult, MiniAppSpecification, Role, ToolDnaMatchResult } from "../../types";
 import type { AIProvider, AIProviderContext } from "../provider";
+import type { PlannerContext, PlannerResult } from "../generativePlanner";
 import { HeuristicAIProvider } from "./heuristic";
 import { AIActionResultSchema, MiniAppSpecificationSchema } from "../../validation/schema";
 import { listSimpleToolDna } from "../../tool-dna/registry";
+import { runGenerativePlanner } from "../generativePlanner";
+import { extractJson } from "../jsonExtract";
 
 /**
  * Wraps HeuristicAIProvider: the deterministic matching pipeline
@@ -135,10 +138,21 @@ If the command doesn't map to an allowed action, respond with the clarify form. 
   summarizeApplication(spec: MiniAppSpecification) {
     return this.base.summarizeApplication(spec);
   }
-}
 
-function extractJson(text: string): string {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (fenced) return fenced[1];
-  return text;
+  async planApp(text: string, context: PlannerContext): Promise<PlannerResult> {
+    return runGenerativePlanner(
+      async (prompt) => {
+        const response = await this.client.messages.create({
+          model: this.model,
+          max_tokens: 3000,
+          messages: [{ role: "user", content: prompt }],
+        });
+        const textBlock = response.content.find((b) => b.type === "text");
+        if (!textBlock || textBlock.type !== "text") throw new Error("AI provider returned no content");
+        return textBlock.text;
+      },
+      text,
+      context
+    );
+  }
 }

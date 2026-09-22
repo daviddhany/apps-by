@@ -48,6 +48,7 @@ export const ComponentKeySchema = z.enum([
   "trivia_quiz",
   "daily_journal",
   "poll",
+  "standings",
 ]);
 
 export const ScreenDefSchema = z.object({
@@ -153,16 +154,18 @@ export const MiniAppSpecificationSchema = z
       collections[entity] = new Set((spec.fields[entity] ?? []).map((f) => f.key));
     }
 
-    function report(path: (string | number)[], formula: string) {
-      for (const message of validateExpression(formula, { collections })) {
+    function report(path: (string | number)[], formula: string, allowNonDeterministic = false) {
+      for (const message of validateExpression(formula, { collections, allowNonDeterministic })) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path, message });
       }
     }
 
     spec.actions.forEach((action, i) => {
       if (action.guard) report(["actions", i, "guard"], action.guard);
+      // Only `effects` (evaluated once, at write time) may use the
+      // non-deterministic sampling functions — see expression.ts.
       for (const [field, formula] of Object.entries(action.effects ?? {})) {
-        report(["actions", i, "effects", field], formula);
+        report(["actions", i, "effects", field], formula, true);
       }
     });
     spec.computed.forEach((c, i) => {

@@ -19,7 +19,8 @@ type Outcome =
   | { kind: "chat_answer"; text: string }
   | { kind: "reminder"; text: string; at?: string }
   | { kind: "clarify"; question: string }
-  | { kind: "mini_app"; appInstanceId: string; title: string };
+  | { kind: "mini_app"; appInstanceId: string; title: string }
+  | { kind: "unsupported_capability"; missing: string; explanation: string };
 
 interface SpecPreview {
   spec: { title: string; icon: string; screens: { title: string }[] };
@@ -275,6 +276,13 @@ export function NeedInput({ autoFocus }: { autoFocus?: boolean }) {
 
       {outcome?.kind === "clarify" ? (
         <div className="animate-in mt-space-md rounded-2xl bg-tertiary-fixed p-space-md font-body-sm text-body-sm text-on-tertiary-fixed-variant">{outcome.question}</div>
+      ) : null}
+
+      {outcome?.kind === "unsupported_capability" ? (
+        <div className="animate-in mt-space-md rounded-2xl bg-error-container p-space-md font-body-sm text-body-sm text-on-error-container">
+          <p className="font-semibold">I can&rsquo;t build {outcome.missing} yet.</p>
+          <p className="mt-1">{outcome.explanation}</p>
+        </div>
       ) : null}
     </div>
   );

@@ -39,6 +39,7 @@ export const COMPONENT_REGISTRY: Record<ComponentKey, ComponentType<ScreenCompon
   daily_journal: DailyJournalView,
   // Web-only for now (see /root/.claude/plans/linked-drifting-popcorn.md) —
   // GenericRecordsView is a reasonable fallback rendering until a native
-  // PollView lands, rather than leaving this key unmapped.
+  // PollView/StandingsView lands, rather than leaving these keys unmapped.
   poll: GenericRecordsView,
+  standings: GenericRecordsView,
 };

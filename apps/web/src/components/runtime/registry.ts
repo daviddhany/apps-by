@@ -14,6 +14,7 @@ import { MeetingSchedulerView } from "./screens/MeetingSchedulerView";
 import { TriviaQuizView } from "./screens/TriviaQuizView";
 import { DailyJournalView } from "./screens/DailyJournalView";
 import { PollView } from "./screens/PollView";
+import { StandingsView } from "./screens/StandingsView";
 
 /**
  * Fixed registry the spec's `screens[].component` must resolve through — a
@@ -43,4 +44,5 @@ export const COMPONENT_REGISTRY: Record<ComponentKey, ComponentType<ScreenCompon
   trivia_quiz: TriviaQuizView,
   daily_journal: DailyJournalView,
   poll: PollView,
+  standings: StandingsView,
 };

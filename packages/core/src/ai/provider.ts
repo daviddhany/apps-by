@@ -5,6 +5,7 @@ import type {
   Role,
   ToolDnaMatchResult,
 } from "../types";
+import type { PlannerContext, PlannerResult } from "./generativePlanner";
 
 export interface AIProviderContext {
   hasExistingApps: boolean;
@@ -26,4 +27,12 @@ export interface AIProvider {
   ): Promise<MiniAppSpecification>;
   mutateApplication(command: string, spec: MiniAppSpecification, actorRole: Role): Promise<AIActionResult>;
   summarizeApplication(spec: MiniAppSpecification): Promise<string>;
+  /** Composes a MiniAppSpecification directly from the primitive registry
+   * (see generativePlanner.ts) instead of matching a named Tool DNA — the
+   * primary path for new app creation when a real LLM is configured.
+   * HeuristicAIProvider's implementation falls back to today's
+   * selectToolDNA + generateSpecification behavior, reshaped to this same
+   * result type, so callers can invoke this uniformly regardless of which
+   * provider is active. */
+  planApp(text: string, context: PlannerContext): Promise<PlannerResult>;
 }

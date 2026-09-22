@@ -79,6 +79,72 @@ describe("expression parser + evaluator", () => {
   });
 });
 
+describe("new aggregate/sampling expression functions", () => {
+  const ctx = {
+    collections: {
+      votes: [
+        { id: "1", voterId: "alice", ideaId: "sushi", weight: 2 },
+        { id: "2", voterId: "bob", ideaId: "sushi", weight: 3 },
+        { id: "3", voterId: "carol", ideaId: "pizza", weight: 1 },
+      ],
+    },
+  };
+
+  it("filter narrows a collection by field equality, composable with count/sum/groupCount", () => {
+    expect(evaluateExpression("count(filter(votes, 'voterId', 'alice'))", ctx)).toBe(1);
+    expect(evaluateExpression("count(filter(votes, 'ideaId', 'sushi'))", ctx)).toBe(2);
+  });
+
+  it("groupSum sums a value field per distinct group value", () => {
+    expect(evaluateExpression("groupSum(votes, 'ideaId', 'weight')", ctx)).toEqual({ sushi: 5, pizza: 1 });
+  });
+
+  it("topNByGroup ranks group values by frequency", () => {
+    expect(evaluateExpression("topNByGroup(votes, 'ideaId', 1)", ctx)).toEqual(["sushi"]);
+    expect(evaluateExpression("topNByGroup(votes, 'ideaId', 2)", ctx)).toEqual(["sushi", "pizza"]);
+  });
+
+  it("random returns a number between 0 and 1", () => {
+    const r = evaluateExpression("random()", { collections: {} }) as number;
+    expect(r).toBeGreaterThanOrEqual(0);
+    expect(r).toBeLessThan(1);
+  });
+
+  it("pickRandom picks an element from a list", () => {
+    const picked = evaluateExpression("pickRandom(votes)", ctx);
+    expect(ctx.collections.votes).toContainEqual(picked);
+  });
+
+  it("pickRandomField picks a field value from a randomly chosen row", () => {
+    const picked = evaluateExpression("pickRandomField(votes, 'ideaId')", ctx) as string;
+    expect(["sushi", "pizza"]).toContain(picked);
+  });
+});
+
+describe("non-determinism gating: random/pickRandom/pickRandomField are effects-only", () => {
+  const schemaCtx = { collections: { votes: new Set(["voterId", "ideaId"]) } };
+
+  it("rejects random/pickRandom/pickRandomField when allowNonDeterministic is unset (guard/computed.formula context)", () => {
+    expect(validateExpression("random()", schemaCtx)).toEqual([
+      "random() is only allowed in an action's effects, not in a guard or computed formula",
+    ]);
+    expect(validateExpression("pickRandom(votes)", schemaCtx).length).toBeGreaterThan(0);
+    expect(validateExpression("pickRandomField(votes, 'ideaId')", schemaCtx).length).toBeGreaterThan(0);
+  });
+
+  it("accepts them when allowNonDeterministic is true (effects context)", () => {
+    const effectsCtx = { ...schemaCtx, allowNonDeterministic: true };
+    expect(validateExpression("random()", effectsCtx)).toEqual([]);
+    expect(validateExpression("pickRandom(votes)", effectsCtx)).toEqual([]);
+    expect(validateExpression("pickRandomField(votes, 'ideaId')", effectsCtx)).toEqual([]);
+  });
+
+  it("does not gate deterministic functions like filter/groupSum/topNByGroup", () => {
+    expect(validateExpression("filter(votes, 'voterId', 'alice')", schemaCtx)).toEqual([]);
+    expect(validateExpression("groupSum(votes, 'ideaId', 'ideaId')", schemaCtx)).toEqual([]);
+  });
+});
+
 describe("planGenericAction", () => {
   const createVoteAction: ActionDef = {
     name: "vote",
